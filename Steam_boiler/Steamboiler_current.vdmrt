@@ -1,0 +1,60 @@
+class steamBoiler2
+    
+instance variables
+
+    qe : real;  -- water in container
+    public pumpState: nat;
+    public valveState: nat; 
+
+values
+
+    C : real = 1000; -- Capacity of container
+    P : real = 10;   -- Pump troughput 
+    V : real = 50;   -- Valve troughput
+
+operations
+
+    public steamBoiler2: () ==> steamBoiler2
+    steamBoiler2() == ( 
+        qe := 500; 
+        valveState := 0;
+        pumpState := 0;
+    ); 
+    public step: (real) ==> ()
+    step(delta) == duration(0)(
+
+        -- compute new values after delta-time has passed
+        dcl deltaQe : real := (pumpState * P) - (valveState * V); 
+        
+        dcl nextQe : real := qe + deltaQe * delta; 
+
+        -- boundary condition: take the max of nextQe and 0
+        -- the boiler can at most be empty
+        if(nextQe < 0) then (nextQe := 0); 
+
+        -- advanced time values are updated
+        qe := nextQe; 
+    )
+    post 0 <= qe and qe <= C; 
+
+    public valveOn: () ==> ()
+    valveOn() == duration(0)(
+        valveState := 1;
+    ); 
+
+    public valveOff: () ==> ()
+    valveOff() == duration(0)(
+        valveState := 0; 
+    ); 
+
+    public pumpOn: ()==>()
+    pumpOn() == duration(0)(
+        pumpState := 1;
+    ); 
+    
+    public pumpOff: ()==>()
+    pumpOff() == duration(0)(
+        pumpState := 0;
+    ); 
+
+end steamBoiler2

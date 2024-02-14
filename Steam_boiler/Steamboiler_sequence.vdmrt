@@ -1,0 +1,81 @@
+class steamBoiler1
+    
+instance variables
+
+    now : seq of real; -- Current time 
+    qe : seq of real;  -- water in container
+    public pumpState: seq of nat;
+    public valveState: seq of nat; 
+
+values
+
+    C : real = 1000; -- Capacity of container
+    P : real = 10;   -- Pump troughput 
+    V : real = 50;   -- Valve troughput
+
+operations
+
+    public steamBoiler1: () ==> steamBoiler1
+    steamBoiler1() == (
+        now:= [0]; 
+        qe:= [500]; 
+        valveState:= [0];
+        pumpState:= [0];
+    ); 
+    public step: (real) ==> ()
+    step(delta) == duration(0)(
+        -- get values
+        dcl currentQe : real := hd qe; 
+        dcl currentPumpState : real := hd pumpState; 
+        dcl currentValveState : real := hd valveState; 
+
+        -- compute new values after delta-time has passed
+        dcl deltaQe : real := (currentPumpState * P) - (currentValveState * V); 
+        dcl nextQe : real := currentQe + deltaQe * delta; 
+
+        -- boundary condition: take the max of nextQe and 0
+        -- the boiler can at most be empty
+
+        if(nextQe < 0) then (nextQe := 0); 
+
+        -- advanced time values are updated
+        qe := [nextQe] ^ qe; 
+        now := [hd now + delta] ^ now; 
+        valveState := [hd valveState] ^ valveState; 
+        pumpState := [hd pumpState] ^ pumpState; 
+    )
+    post 0 <= hd qe and hd qe <= C; 
+
+    public valveOn: () ==> ()
+    valveOn() == duration(0)(
+        valveState := [1] ^ valveState; 
+        now := [hd now] ^ now; 
+        qe := [hd qe] ^ qe; 
+        pumpState := [hd pumpState] ^ pumpState; 
+    ); 
+
+    public valveOff: () ==> ()
+    valveOff() == duration(0)(
+        valveState := [0] ^ valveState; 
+        now := [hd now] ^ now; 
+        qe := [hd qe] ^ qe; 
+        pumpState := [hd pumpState] ^ pumpState;    
+    ); 
+
+    public pumpOn: ()==>()
+    pumpOn() == duration(0)(
+        valveState := [hd valveState] ^ valveState; 
+        now := [hd now] ^ now; 
+        qe := [hd qe] ^ qe; 
+        pumpState := [1] ^ pumpState; 
+    ); 
+    
+    public pumpOff: ()==>()
+    pumpOff() == duration(0)(
+        valveState := [hd valveState] ^ valveState; 
+        now := [hd now] ^ now; 
+        qe := [hd qe] ^ qe; 
+        pumpState := [0] ^ pumpState; 
+    ); 
+
+end steamBoiler1
