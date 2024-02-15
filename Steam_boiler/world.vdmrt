@@ -35,7 +35,7 @@ operations
         return true; 
     ); 
 
-    -- Exercise 3.v
+    -- Exercise 3.b
     public scenario4 : () ==> bool
     scenario4() == (
         mySys`boiler.step(2);  

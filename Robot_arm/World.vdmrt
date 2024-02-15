@@ -1,0 +1,36 @@
+class World
+
+operations 
+
+    public scenario1 : () ==> bool
+    scenario1() == (
+        System`robert.setTarget(90);
+        System`robert.step(10);
+
+        return true;
+    );
+
+    public scenario2 : () ==> bool
+    scenario2() == (
+        System`robert.setTarget(40);
+        System`robert.step(15);
+
+        return true;
+    );
+    
+    public scenario3 : () ==> bool
+    scenario3() == (
+        System`robert.setTarget(90);
+        System`robert.step(10);
+
+        return true;
+    );
+
+    public scenario4 : () ==> bool
+    scenario4() == (
+        System`robert.setTarget(90);
+        System`robert.step(10);
+
+        return true;
+    );
+end World

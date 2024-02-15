@@ -1,0 +1,40 @@
+class RobotArm
+
+instance variables
+    q : real; -- angle of arm in radians
+    q_vel : real; -- velocity of arm in ead/Seq
+    target : real; -- taget angel of the arm in radians 
+
+values
+    M1 : real = 0; -- Minimum limit for arm
+    M2 : real = 0.78; -- Maximum limit for arm
+    -- Kp : real = 0; -- Proportional factor, BEREGN VIA IRT
+    -- Kd : real = 0; -- derivative factor, BEREGN VHA IRT
+    
+operations
+    public RobotArm: () ==> RobotArm
+    RobotArm() == (
+        q := 0;
+        q_vel := 0;
+        target := 0;
+    );
+
+
+    public step: (real) ==> ()
+    step(delta) == duration(0)(
+        
+        q := q + 0.1 * delta;
+        if q > target 
+        then 
+            q := target; 
+        -- Spørg carl om vi skal implementere
+        -- step function
+    )
+    post M1 <= q and q <= M2;
+    
+    public setTarget : (real) ==> ()
+    setTarget(angle) == duration(0)(
+        target:= angle;
+    );
+    
+end RobotArm
