@@ -1,0 +1,13 @@
+// Se example 8
+
+p → q, ¬q ⊢ ¬p
+{
+    1. ¬q           premise
+    2. p → q        premise
+    3. {
+        4. p        assume
+        5. q        →e 2 4
+        6. ⊥        ¬e 5 1
+    }
+    7. ¬p           ¬i 3
+}

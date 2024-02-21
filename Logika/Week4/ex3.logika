@@ -1,0 +1,10 @@
+
+// Exercise 3
+s, q, r ⊢ r ∧ (q ∧ s)
+{
+    1. s            premise
+    2. q            premise
+    3. r            premise
+    4. q ∧ s        ∧i 2 1
+    5. r ∧ (q ∧ s)  ∧i 3 4
+}
