@@ -1,0 +1,12 @@
+// hej
+
+¬q ⊢ q → s
+{
+    1. {
+        2. q        assume
+        3. ¬q       premise
+        4. ⊥        ¬e 2 3
+        5. s        ⊥e 4
+    }
+    6. q → s    →i 1
+}
