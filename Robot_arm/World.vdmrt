@@ -4,8 +4,14 @@ operations
 
     public scenario1 : () ==> bool
     scenario1() == (
-        System`robert.setTarget(90);
-        System`robert.step(10);
+        System`robert.setTarget(1);
+        System`robert.setKp(5);
+        System`robert.setKd(1);
+
+        while System`robert.t < 10 do
+            System`robert.step(0.1);
+
+        System`robert.step(0.3);
 
         return true;
     );

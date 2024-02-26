@@ -1,40 +1,84 @@
 class RobotArm
 
 instance variables
-    q : real; -- angle of arm in radians
-    q_vel : real; -- velocity of arm in ead/Seq
-    target : real; -- taget angel of the arm in radians 
+
+    public t : real;
+
+    q : real;       -- angle of arm in radians
+    q_vel : real;   -- velocity of arm in rad/Seq
+    q_acc : real;   -- acceleration of arm
+
+    e_last : real;  -- Last error off target
+
+    target : real;  -- taget angel of the arm in radians 
+
+    Kp : real; -- Proportional factor BEREGN VIA IRT
+    Kd : real; -- derivative factor BEREGN VHA IRT
+
+    public q_out : seq of real;
 
 values
-    M1 : real = 0; -- Minimum limit for arm
-    M2 : real = 0.78; -- Maximum limit for arm
-    -- Kp : real = 0; -- Proportional factor, BEREGN VIA IRT
-    -- Kd : real = 0; -- derivative factor, BEREGN VHA IRT
+    N1 : real = 0;    -- minimum limit for target
+    N2 : real = 1.57; -- maximum limit for target
+
+    M1 : real = -0.2; -- Minimum limit for arm
+    M2 : real = 1.77; -- Maximum limit for arm
+
+
+
+    I : real = 0.1;   --  Inertia of robot arm should be calculated: I = m*r^2
     
 operations
     public RobotArm: () ==> RobotArm
     RobotArm() == (
         q := 0;
         q_vel := 0;
+        q_acc := 0;
         target := 0;
+        e_last := target - q;
+        t := 0;
+        Kp := 1; 
+        Kd := 1; 
+        q_out := [0];
     );
 
 
     public step: (real) ==> ()
     step(delta) == duration(0)(
+  
+        dcl e : real := target - q;           -- error from e(t_i) 
         
-        q := q + 0.1 * delta;
-        if q > target 
-        then 
-            q := target; 
-        -- Spørg carl om vi skal implementere
-        -- step function
-    )
-    post M1 <= q and q <= M2;
+        -- Proportional
+        dcl t_motor1 : real := Kp * e;
+
+        -- Derivative
+        dcl de : real := e - e_last;         -- change of error    
+        dcl t_motor2: real := Kd * de;
+
+        q_acc := (t_motor1 + t_motor2) / I;    -- calculate acceleration based on tourqe
+
+        q_vel := q_vel + q_acc * delta;        -- Update 
+
+        q := q + q_vel * delta;
+        e_last := e;
+
+        t := t + delta;
+        q_out := q_out ^ [q];
+    );
+    -- post M1 <= q and q <= M2;
     
     public setTarget : (real) ==> ()
     setTarget(angle) == duration(0)(
         target:= angle;
     );
-    
+
+    public setKd : (real) ==> ()
+    setKd(newKd) == duration(0)(
+        Kd := newKd
+    );
+
+    public setKp : (real) ==> ()
+    setKp(newKp) == duration(0)(
+        Kp := newKp
+    )
 end RobotArm
