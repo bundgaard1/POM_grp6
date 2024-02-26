@@ -2,40 +2,54 @@ class World
 
 operations 
 
+    -- Perfect
     public scenario1 : () ==> bool
     scenario1() == (
         System`robert.setTarget(1);
-        System`robert.setKp(5);
-        System`robert.setKd(1);
+        System`robert.setKp(0.3);
+        System`robert.setKd(8);
 
-        while System`robert.t < 10 do
+        while System`robert.t < 100 do
             System`robert.step(0.1);
-
-        System`robert.step(0.3);
 
         return true;
     );
 
+    -- Overshoot
     public scenario2 : () ==> bool
     scenario2() == (
-        System`robert.setTarget(40);
-        System`robert.step(15);
+        System`robert.setTarget(1);
+        System`robert.setKp(4);
+        System`robert.setKd(1);
+
+        while System`robert.t < 100 do
+            System`robert.step(0.1);
 
         return true;
     );
     
+    -- Undershoot
     public scenario3 : () ==> bool
     scenario3() == (
-        System`robert.setTarget(90);
-        System`robert.step(10);
+        System`robert.setTarget(1);
+        System`robert.setKp(0);
+        System`robert.setKd(1);
+
+        while System`robert.t < 100 do
+            System`robert.step(0.1);
 
         return true;
     );
 
+    -- Normal
     public scenario4 : () ==> bool
     scenario4() == (
-        System`robert.setTarget(90);
-        System`robert.step(10);
+        System`robert.setTarget(1);
+        System`robert.setKp(0.3);
+        System`robert.setKd(1.5);
+
+        while System`robert.t < 100 do
+            System`robert.step(0.1);
 
         return true;
     );
