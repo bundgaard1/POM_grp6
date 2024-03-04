@@ -1,0 +1,17 @@
+import org.sireum.logika._
+
+
+def op(x: Z ): Z = {
+    l"""{
+        pre x > 0
+        post x + x + x > 2
+    }"""
+l"""{
+       1. x > 0     premise
+       2. x+x > 1   algebra 1 1
+       3. x+x+x > 2 algebra 1 2
+}"""
+
+    return x+x+x
+
+}

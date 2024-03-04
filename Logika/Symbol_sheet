@@ -15,3 +15,9 @@ Symbols - you can copy these to create your "logika" files:
 
 
 
+1 public op : (int) ==> (int)
+2 op(x) == (
+    3 return x + x + x;
+4 )
+5 pre x>0
+6 post x + x + x > 2;

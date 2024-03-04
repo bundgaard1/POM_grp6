@@ -1,0 +1,39 @@
+import org.sireum.logika._
+
+
+def op(x: Z, y: Z): Z = {
+    l"""{
+        pre y > 0
+        post result > 0
+    }"""
+
+    var z : Z = 1
+
+    if (x < y){
+        z = z + y - x
+        l"""{
+            1. x < y               premise
+            2. z_old == 1          premise
+            3. z == z_old +  y - x premise
+            4. 0 < y - x           algebra 1
+            5. z_old + y - x > 0   algebra 2 4
+            6. z > 0               algebra 3 5
+        }"""
+    }else {
+        z = x + y + z
+        l"""{
+              1. ¬(x < y)      premise
+              2. y > 0  premise
+              3. x >= y    algebra 1
+              4. x > 0 algebra 3 2
+              5. z_old == 1 premise
+              6. z == x + y + z_old premise
+              7. x+y > 0 algebra 2 4
+              8. z_old + y + x > 0 algebra 5 7
+              9. z > 0 algebra 6 8
+        }"""
+    }
+ 
+    return z
+
+}

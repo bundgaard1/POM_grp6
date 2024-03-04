@@ -1,0 +1,29 @@
+import org.sireum.logika._
+
+val p : Z = readInt()
+
+def op(x: Z ): Z = {
+    l"""{
+        pre p > 0
+            x > 0
+        post result > 0
+    }"""
+
+    var y : Z = p * x
+
+    l"""{
+        1. x > 0      premise
+        2. p > 0      premise
+        3. y == p*x   premise
+        4. p*x > 0    algebra 1 2
+        5. y > 0      algebra 3 4
+    }"""
+    y = y+1
+    l"""{
+        1. y_old > 0        premise
+        2. y == y_old + 1   premise
+        3. y > 0            algebra  1 2
+    }"""
+    return y
+
+}
