@@ -4,10 +4,7 @@ instance variables
 
     public ctl_q : real;       -- angle of arm in radians
     public ctl_q_vel : real;   -- velocity of arm in rad/Seq
-
     public ctl_q_target : real;  -- taget angel of the arm in radians 
-
- 
 
 values 
 
