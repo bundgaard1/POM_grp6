@@ -2,9 +2,10 @@ class RobotArm
 
 instance variables
 
-    env_q : real;       -- angle of arm in radians
-    env_q_vel : real;   -- velocity of arm in rad/Seq
-    env_q_acc : real;   -- acceleration of arm
+    public t : real; 
+    public env_q : real;       -- angle of arm in radians
+    public env_q_vel : real;   -- velocity of arm in rad/Seq
+    public env_q_acc : real;   -- acceleration of arm
 
 values
     N1 : real = 0;    -- minimum limit for target

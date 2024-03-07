@@ -2,6 +2,25 @@ class World
 
 operations 
 
+    public echoState : () ==> ()
+    echoState() == (
+        dcl str : seq of char := "";
+        str := str ^ VDMUtil`val2seq_of_char[nat](Controller'controller.ctl_q); -- controller angle
+        str := str ^ " ";
+        str := str ^ VDMUtil`val2seq_of_char[real](Controller'controller.ctl_q_vel); -- controller velocity 
+        str := str ^ " ";
+        str := str ^ VDMUtil`val2seq_of_char[nat](Controller'controller.ctl_q_acc); -- controller accelleration
+        str := str ^ " ";
+        str := str ^ VDMUtil`val2seq_of_char[nat](System`robert.env_q);-- arm angle
+        str := str ^ " ";
+        str := str ^ VDMUtil`val2seq_of_char[real](System`robert.env_q_vel); -- arm velocity
+        str := str ^ " ";
+        str := str ^ VDMUtil`val2seq_of_char[nat](System`robert.env_q_acc); -- arm accelleration
+        str := str ^ " ";
+        str := str ^ VDMUtil`val2seq_of_char[nat](System`robert.t); -- time
+        str := str ^ "\n";
+    );
+
     -- Perfect
     public scenario1 : () ==> bool
     scenario1() == (
@@ -9,7 +28,7 @@ operations
         System`robert.setKp(0.3);
         System`robert.setKd(8);
 
-        while System`robert.t < 100 do
+        while System`robert.t < 100 do 
             System`robert.step(0.1);
 
         return true;
