@@ -1,10 +1,16 @@
 class World
 
+instance variables
+    io : IO := new IO();
+
 operations 
 
-    public echoState : () ==> ()
-    echoState() == (
+    public echoState : (int) ==> ()
+    echoState(counter) == (
         dcl str : seq of char := "";
+        dcl succ : bool;
+        str := str ^ VDMUtil`val2seq_of_char[int](counter); -- controller angle
+        str := str ^ " ";
         str := str ^ VDMUtil`val2seq_of_char[real](System`controller.ctl_q); -- controller angle
         str := str ^ " ";
         str := str ^ VDMUtil`val2seq_of_char[real](System`controller.ctl_q_target); -- controller velocity 
@@ -15,7 +21,7 @@ operations
         str := str ^ " ";
         str := str ^ VDMUtil`val2seq_of_char[real](System`robert.motor_tourqe); -- time
         str := str ^ "\n";
-        succ := io.echoState(str); 
+        succ := io.echo(str); 
     );
 
 
@@ -23,7 +29,7 @@ operations
 
     public scenario0 :() ==> bool 
     scenario0() == (
-        echoState();
+        echoState(0);
         return true;
     );
 
@@ -41,7 +47,7 @@ operations
         while i < 100 do(
             System`controller.ControlTheMotor();
             System`robert.step(0.1);
-            echoState();
+            echoState(i);
             i := i+1;
         );
         

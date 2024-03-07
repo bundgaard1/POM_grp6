@@ -47,16 +47,23 @@ operations
 
     public ControlTheMotor : () ==> ()
     ControlTheMotor() == duration(0)(
+        dcl e : real;
+        dcl t_motor1 : real;
+        dcl de : real;       
+        dcl t_motor2 : real;
+
         -- Implement
 
-        dcl e : real := ctl_q_target - ctl_q;           -- error from e(t_i) 
+        MonitorArmAngle();
+
+        e := ctl_q_target - ctl_q;           -- error from e(t_i) 
         
         -- Proportional
-        dcl t_motor1 : real := Kp * e;
+        t_motor1 := Kp * e;
 
         -- Derivative
-        dcl de : real := e - e_last;         -- change of error    
-        dcl t_motor2 : real := Kd * de;
+        de := e - e_last;         -- change of error    
+        t_motor2 := Kd * de;
 
         -- Set Tourqe on world
         System`robert.motor_tourqe := t_motor1 + t_motor2;
