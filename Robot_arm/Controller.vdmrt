@@ -1,3 +1,54 @@
 class Controller
 
 instance variables
+
+    ctl_q : real;       -- angle of arm in radians
+    ctl_q_vel : real;   -- velocity of arm in rad/Seq
+
+    ctl_q_target : real;  -- taget angel of the arm in radians 
+
+ 
+
+values 
+
+    Kp : real = 1; -- Proportional factor BEREGN VIA IRT
+    Kd : real = 1; -- derivative factor BEREGN VHA IRT
+
+operations
+
+    public Controller: () ==> controller
+    Controller() == (
+        ctl_q := 0;
+        ctl_q_vel := 0;
+        ctl_q_acc := 0;
+
+    );
+
+    public setTarget : (real) ==> ()
+    setTarget(new_target) == duration(0)(
+        ctl_q_target := new_target;
+    );
+
+    public MonitorArmAngle() ==> ()
+    MonitorArmAngle() == duration(0)(
+        -- Implement
+        Kp = Kp;
+    );
+    post ctl_q > 0;
+
+    public ControlTheMotor() ==> ()
+    ControlTheMotor() == duration(0)(
+        -- Implement
+    );
+
+
+    public setKd : (real) ==> ()
+    setKd(newKd) == duration(0)(
+        Kd := newKd
+    );
+
+    public setKp : (real) ==> ()
+    setKp(newKp) == duration(0)(
+        Kp := newKp
+    )
+e

@@ -4,7 +4,7 @@ val p : Z = readInt()
 
 def op(x: Z ): Z = {
     l"""{
-        pre p > 0
+        pre px > 0
             x > 0
         post result > 0
     }"""
