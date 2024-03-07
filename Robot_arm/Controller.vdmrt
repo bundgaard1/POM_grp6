@@ -13,7 +13,7 @@ values
 
 operations
 
-    public Controller: () ==> controller
+    public Controller: () ==> Controller
     Controller() == (
         ctl_q := 0;
         ctl_q_vel := 0;
@@ -26,16 +26,17 @@ operations
         ctl_q_target := new_target;
     );
 
-    public MonitorArmAngle() ==> ()
+    public MonitorArmAngle :() ==> ()
     MonitorArmAngle() == duration(0)(
-        -- Implement
-        Kp = Kp;
+        -- Implement       
+        ctl_q := ctl_q;
     );
-    post ctl_q > 0;
 
-    public ControlTheMotor() ==> ()
+
+    public ControlTheMotor : () ==> ()
     ControlTheMotor() == duration(0)(
         -- Implement
+        ctl_q := ctl_q;
     );
 
 
@@ -47,5 +48,6 @@ operations
     public setKp : (real) ==> ()
     setKp(newKp) == duration(0)(
         Kp := newKp
-    )
-e
+    );
+
+end Controller
