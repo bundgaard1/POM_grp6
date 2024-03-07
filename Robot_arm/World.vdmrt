@@ -5,19 +5,19 @@ operations
     public echoState : () ==> ()
     echoState() == (
         dcl str : seq of char := "";
-        str := str ^ VDMUtil`val2seq_of_char[nat](Controller'controller.ctl_q); -- controller angle
+        str := str ^ VDMUtil`val2seq_of_char[real](Controller'controller.ctl_q); -- controller angle
         str := str ^ " ";
         str := str ^ VDMUtil`val2seq_of_char[real](Controller'controller.ctl_q_vel); -- controller velocity 
         str := str ^ " ";
-        str := str ^ VDMUtil`val2seq_of_char[nat](Controller'controller.ctl_q_acc); -- controller accelleration
+        str := str ^ VDMUtil`val2seq_of_char[real](Controller'controller.ctl_q_acc); -- controller accelleration
         str := str ^ " ";
-        str := str ^ VDMUtil`val2seq_of_char[nat](System`robert.env_q);-- arm angle
+        str := str ^ VDMUtil`val2seq_of_char[real](System`robert.env_q);-- arm angle
         str := str ^ " ";
         str := str ^ VDMUtil`val2seq_of_char[real](System`robert.env_q_vel); -- arm velocity
         str := str ^ " ";
-        str := str ^ VDMUtil`val2seq_of_char[nat](System`robert.env_q_acc); -- arm accelleration
+        str := str ^ VDMUtil`val2seq_of_char[real](System`robert.env_q_acc); -- arm accelleration
         str := str ^ " ";
-        str := str ^ VDMUtil`val2seq_of_char[nat](System`robert.t); -- time
+        str := str ^ VDMUtil`val2seq_of_char[real](System`robert.t); -- time
         str := str ^ "\n";
     );
 
