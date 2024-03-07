@@ -15,6 +15,7 @@ operations
         str := str ^ " ";
         str := str ^ VDMUtil`val2seq_of_char[real](System`robert.motor_tourqe); -- time
         str := str ^ "\n";
+        succ := io.echoState(str); 
     );
 
 
