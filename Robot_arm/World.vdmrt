@@ -5,72 +5,49 @@ operations
     public echoState : () ==> ()
     echoState() == (
         dcl str : seq of char := "";
-        str := str ^ VDMUtil`val2seq_of_char[real](Controller'controller.ctl_q); -- controller angle
+        str := str ^ VDMUtil`val2seq_of_char[real](System`controller.ctl_q); -- controller angle
         str := str ^ " ";
-        str := str ^ VDMUtil`val2seq_of_char[real](Controller'controller.ctl_q_vel); -- controller velocity 
-        str := str ^ " ";
-        str := str ^ VDMUtil`val2seq_of_char[real](Controller'controller.ctl_q_acc); -- controller accelleration
+        str := str ^ VDMUtil`val2seq_of_char[real](System`controller.ctl_q_target); -- controller velocity 
         str := str ^ " ";
         str := str ^ VDMUtil`val2seq_of_char[real](System`robert.env_q);-- arm angle
         str := str ^ " ";
         str := str ^ VDMUtil`val2seq_of_char[real](System`robert.env_q_vel); -- arm velocity
         str := str ^ " ";
-        str := str ^ VDMUtil`val2seq_of_char[real](System`robert.env_q_acc); -- arm accelleration
-        str := str ^ " ";
-        str := str ^ VDMUtil`val2seq_of_char[real](System`robert.t); -- time
+        str := str ^ VDMUtil`val2seq_of_char[real](System`robert.motor_tourqe); -- time
         str := str ^ "\n";
     );
+
+
+
+
+    public scenario0 :() ==> bool 
+    scenario0() == (
+        echoState();
+        return true;
+    );
+
 
     -- Perfect
     public scenario1 : () ==> bool
     scenario1() == (
-        System`robert.setTarget(1);
-        System`robert.setKp(0.3);
-        System`robert.setKd(8);
+        dcl i : real := 0;
 
-        while System`robert.t < 100 do 
+        System`controller.setTarget(1);
+        System`controller.setKp(1);
+        System`controller.setKd(1);
+
+
+        while i < 100 do(
+            System`controller.ControlTheMotor();
             System`robert.step(0.1);
+            echoState();
+            i := i+1;
+        );
+        
 
         return true;
+
     );
 
-    -- Overshoot
-    public scenario2 : () ==> bool
-    scenario2() == (
-        System`robert.setTarget(1);
-        System`robert.setKp(4);
-        System`robert.setKd(1);
-
-        while System`robert.t < 100 do
-            System`robert.step(0.1);
-
-        return true;
-    );
-    
-    -- Undershoot
-    public scenario3 : () ==> bool
-    scenario3() == (
-        System`robert.setTarget(1);
-        System`robert.setKp(0);
-        System`robert.setKd(1);
-
-        while System`robert.t < 100 do
-            System`robert.step(0.1);
-
-        return true;
-    );
-
-    -- Normal
-    public scenario4 : () ==> bool
-    scenario4() == (
-        System`robert.setTarget(1);
-        System`robert.setKp(0.3);
-        System`robert.setKd(1.5);
-
-        while System`robert.t < 100 do
-            System`robert.step(0.1);
-
-        return true;
-    );
 
 end World

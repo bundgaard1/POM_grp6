@@ -2,15 +2,12 @@ class RobotArm
 
 instance variables
 
-    public t : real; 
     public env_q : real;       -- angle of arm in radians
     public env_q_vel : real;   -- velocity of arm in rad/Seq
-    public env_q_acc : real;   -- acceleration of arm
+   
+    public motor_tourqe : real;  -- Tourqe applied on arm joint
 
 values
-    N1 : real = 0;    -- minimum limit for target
-    N2 : real = 1.57; -- maximum limit for target
-
     M1 : real = -0.2; -- Minimum limit for arm
     M2 : real = 1.77; -- Maximum limit for arm
 
@@ -21,33 +18,20 @@ operations
     RobotArm() == (
         env_q := 0;
         env_q_vel := 0;
-        env_q_acc := 0;
-        target := 0;
-        e_last := target - q;
+        
+        motor_tourqe := 0;
+
     );
 
 
     public step: (real) ==> ()
     step(delta) == duration(0)(
   
-        dcl e : real := target - q;           -- error from e(t_i) 
-        
-        -- Proportional
-        dcl t_motor1 : real := Kp * e;
+        dcl q_acc : real := motor_tourqe / I;    -- calculate acceleration based on tourqe
 
-        -- Derivative
-        dcl de : real := e - e_last;         -- change of error    
-        dcl t_motor2: real := Kd * de;
+        env_q_vel := env_q_vel + q_acc * delta;        -- Update 
 
-        q_acc := (t_motor1 + t_motor2) / I;    -- calculate acceleration based on tourqe
-
-        q_vel := q_vel + q_acc * delta;        -- Update 
-
-        q := q + q_vel * delta;
-        e_last := e;
-
-        t := t + delta;
-        q_out := q_out ^ [q];
+        env_q := env_q + env_q_vel * delta;
     );
     -- post M1 <= q and q <= M2;
 

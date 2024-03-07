@@ -3,54 +3,76 @@ class Controller
 instance variables
 
     public ctl_q : real;       -- angle of arm in radians
-    public ctl_q_vel : real;   -- velocity of arm in rad/Seq
 
     public ctl_q_target : real;  -- taget angel of the arm in radians 
-
- 
+   
+    Kp : real; -- Proportional factor BEREGN VIA IRT
+    Kd : real; -- derivative factor BEREGN VHA IRT
+   
+    e_last : real;  -- error at last control
 
 values 
 
-    Kp : real = 1; -- Proportional factor BEREGN VIA IRT
-    Kd : real = 1; -- derivative factor BEREGN VHA IRT
+    N1 : real = 0;    -- minimum limit for target
+    N2 : real = 1.57; -- maximum limit for target
+
+   
 
 operations
 
     public Controller: () ==> Controller
     Controller() == (
         ctl_q := 0;
-        ctl_q_vel := 0;
-        ctl_q_acc := 0;
+        ctl_q_target := ctl_q;
+        e_last := 0;
+
+        Kp := 1;
+        Kd := 1;
 
     );
 
     public setTarget : (real) ==> ()
     setTarget(new_target) == duration(0)(
-        ctl_q_target := new_target;
+
+        if N1 < new_target and new_target < N2 then
+            ctl_q_target := new_target;
     );
 
-    public MonitorArmAngle :() ==> ()
+    public MonitorArmAngle : () ==> ()
     MonitorArmAngle() == duration(0)(
         -- Implement       
-        ctl_q := ctl_q;
+        ctl_q := System`robert.env_q;
     );
 
 
     public ControlTheMotor : () ==> ()
     ControlTheMotor() == duration(0)(
         -- Implement
-        ctl_q := ctl_q;
+
+        dcl e : real := ctl_q_target - ctl_q;           -- error from e(t_i) 
+        
+        -- Proportional
+        dcl t_motor1 : real := Kp * e;
+
+        -- Derivative
+        dcl de : real := e - e_last;         -- change of error    
+        dcl t_motor2 : real := Kd * de;
+
+        -- Set Tourqe on world
+        System`robert.motor_tourqe := t_motor1 + t_motor2;
+
+        e_last := e;
     );
 
 
     public setKd : (real) ==> ()
     setKd(newKd) == duration(0)(
-        Kd := newKd
+        Kd := newKd;
     );
 
     public setKp : (real) ==> ()
     setKp(newKp) == duration(0)(
-        Kp := newKp
+        Kp := newKp;
     );
 
 end Controller
