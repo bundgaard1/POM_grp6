@@ -52,9 +52,7 @@ operations
         dcl de : real;       
         dcl t_motor2 : real;
 
-        -- Implement
-
-        MonitorArmAngle();
+        -- PD controller
 
         e := ctl_q_target - ctl_q;           -- error from e(t_i) 
         
@@ -66,7 +64,7 @@ operations
         t_motor2 := Kd * de;
 
         -- Set Tourqe on world
-        System`robert.motor_tourqe := t_motor1 + t_motor2;
+        System`robert.env_motor_tourqe := t_motor1 + t_motor2;
 
         e_last := e;
     );

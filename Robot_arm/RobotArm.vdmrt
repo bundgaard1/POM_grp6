@@ -5,7 +5,7 @@ instance variables
     public env_q : real;       -- angle of arm in radians
     public env_q_vel : real;   -- velocity of arm in rad/Seq
    
-    public motor_tourqe : real;  -- Tourqe applied on arm joint
+    public env_motor_tourqe : real;  -- Tourqe applied on arm joint
 
 values
     M1 : real = -0.2; -- Minimum limit for arm
@@ -19,7 +19,7 @@ operations
         env_q := 0;
         env_q_vel := 0;
         
-        motor_tourqe := 0;
+        env_motor_tourqe := 0;
 
     );
 
@@ -27,9 +27,9 @@ operations
     public step: (real) ==> ()
     step(delta) == duration(0)(
   
-        dcl q_acc : real := motor_tourqe / I;    -- calculate acceleration based on tourqe
+        dcl q_acc : real := env_motor_tourqe / I;    -- calculate acceleration based on tourqe
 
-        env_q_vel := env_q_vel + q_acc * delta;        -- Update 
+        env_q_vel := env_q_vel + q_acc * delta;  -- Update 
 
         env_q := env_q + env_q_vel * delta;
     );

@@ -3,8 +3,7 @@ class World
 instance variables
     io : IO := new IO();
 
-operations 
-
+operations
     public echoState : (int) ==> ()
     echoState(counter) == (
         dcl str : seq of char := "";
@@ -19,9 +18,28 @@ operations
         str := str ^ " ";
         str := str ^ VDMUtil`val2seq_of_char[real](System`robert.env_q_vel); -- arm velocity
         str := str ^ " ";
-        str := str ^ VDMUtil`val2seq_of_char[real](System`robert.motor_tourqe); -- time
+        str := str ^ VDMUtil`val2seq_of_char[real](System`robert.env_motor_tourqe); -- time
         str := str ^ "\n";
         succ := io.echo(str); 
+    );
+
+    public StateToFile : (int) ==> ()
+    StateToFile(counter) == (
+        dcl str : seq of char := "";
+        dcl succ : bool;
+        str := str ^ VDMUtil`val2seq_of_char[int](counter); -- controller angle
+        str := str ^ " ";
+        str := str ^ VDMUtil`val2seq_of_char[real](System`controller.ctl_q); -- controller angle
+        str := str ^ " ";
+        str := str ^ VDMUtil`val2seq_of_char[real](System`controller.ctl_q_target); -- controller velocity 
+        str := str ^ " ";
+        str := str ^ VDMUtil`val2seq_of_char[real](System`robert.env_q);-- arm angle
+        str := str ^ " ";
+        str := str ^ VDMUtil`val2seq_of_char[real](System`robert.env_q_vel); -- arm velocity
+        str := str ^ " ";
+        str := str ^ VDMUtil`val2seq_of_char[real](System`robert.env_motor_tourqe); -- time
+        str := str ^ "\n";
+        succ := io.fecho("Steam_boiler/senarios/a.txt",str,<append>); 
     );
 
 
@@ -34,26 +52,102 @@ operations
     );
 
 
-    -- Perfect
     public scenario1 : () ==> bool
     scenario1() == (
         dcl i : real := 0;
 
         System`controller.setTarget(1);
-        System`controller.setKp(1);
-        System`controller.setKd(1);
-
+        System`controller.setKd(8);
+        System`controller.setKp(0.3);
 
         while i < 100 do(
             System`controller.ControlTheMotor();
             System`robert.step(0.1);
-            echoState(i);
+            StateToFile(i);
             i := i+1;
         );
         
-
         return true;
+    );
 
+
+    public scenario2 : () ==> bool
+    scenario2() == (
+        dcl i : real := 0;
+
+        System`controller.setTarget(1);
+        System`controller.setKd(1);
+        System`controller.setKp(4);
+
+        while i < 100 do(
+            System`controller.ControlTheMotor();
+            System`robert.step(0.1);
+            StateToFile(i);
+            i := i+1;
+        );
+        
+        return true;
+    );
+
+
+    public scenario3 : () ==> bool
+    scenario3() == (
+        dcl i : real := 0;
+
+        System`controller.setTarget(1);
+        System`controller.setKd(1);
+        System`controller.setKp(0);
+
+        while i < 100 do(
+            System`controller.ControlTheMotor();
+            System`robert.step(0.1);
+            StateToFile(i);
+            i := i+1;
+        );
+        
+        return true;
+    );
+
+    -- Perfect
+    public scenario4 : () ==> bool
+    scenario4() == (
+        dcl i : real := 0;
+
+        System`controller.setTarget(1);
+        System`controller.setKd(1.5);
+        System`controller.setKp(0.3);
+
+        while i < 100 do(
+            System`controller.ControlTheMotor();
+            System`robert.step(0.1);
+            StateToFile(i);
+            i := i+1;
+        );
+        
+        return true;
+    );
+
+    public scenario5 : () ==> bool
+    scenario5() == (
+        dcl i : real := 0;
+
+        System`controller.setTarget(1);
+        System`controller.setKd(1);
+        System`controller.setKp(0.1);
+
+        while i < 30 do(
+            dcl j : real := 0;
+            System`controller.MonitorArmAngle();
+            while j < 5 do(
+                StateToFile(i);
+                System`controller.ControlTheMotor();
+                System`robert.step(0.1);
+                j := j+1;
+            );
+            i := i+1;
+        );
+        
+        return true; 
     );
 
 

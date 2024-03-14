@@ -1,4 +1,4 @@
- system mySys
- instance variables
-    public static boiler:steamBoiler2 := new steamBoiler2();
-end mySys
+-- system mySys
+-- instance variables
+--   public static boiler:steamBoiler2 := new steamBoiler2();
+--end mySys

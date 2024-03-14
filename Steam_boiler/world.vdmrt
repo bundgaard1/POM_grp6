@@ -1,48 +1,12 @@
 class world
 
 operations
-
-    public scenario1 : () ==> bool
-    scenario1() == (
-        mySys`boiler.pumpOn(); 
-        mySys`boiler.step(2); 
-        mySys`boiler.step(7.5); 
-        mySys`boiler.step(5);
-        return true; 
-    ); 
-
-    public scenario2 : () ==> bool
-    scenario2() == (
-        mySys`boiler.valveOn(); 
-        mySys`boiler.step(2); 
-        mySys`boiler.step(7.5); 
-        mySys`boiler.step(50);
-        return true; 
-    ); 
-
-    -- Exercise 2.b
-    -- Scenario where the water level rises above N2=600,
-    -- And the vater level decrease again.
-    public scenario3 : () ==> bool
-    scenario3() == (
-        mySys`boiler.step(2); 
-        mySys`boiler.pumpOn(); 
-        mySys`boiler.step(15);
-        mySys`boiler.pumpOff();
-        mySys`boiler.valveOn(); 
-        mySys`boiler.step(5);
-        mySys`boiler.valveOff(); 
-        return true; 
-    ); 
-
-    -- Exercise 3.b
-    public scenario4 : () ==> bool
-    scenario4() == (
-        mySys`boiler.step(2);  
-        mySys`boiler.step(500); 
-        mySys`boiler.pumpOn();
-        mySys`boiler.step(40);
-        mySys`boiler.step(20);
-        return true; 
-    ); 
+    -- public scenario1 : () ==> bool
+    -- scenario1() == (
+    --     mySys`boiler.pumpOn(); 
+    --     mySys`boiler.step(2); 
+    --     mySys`boiler.step(7.5); 
+    --     mySys`boiler.step(5);
+    --     return true; 
+    -- )
 end world
