@@ -39,7 +39,7 @@ operations
         str := str ^ " ";
         str := str ^ VDMUtil`val2seq_of_char[real](System`robert.env_motor_tourqe); -- time
         str := str ^ "\n";
-        succ := io.fecho("Steam_boiler/senarios/a.txt",str,<append>); 
+        succ := io.fecho("Robot_arm/senarios/a.txt",str,<append>); 
     );
 
 
