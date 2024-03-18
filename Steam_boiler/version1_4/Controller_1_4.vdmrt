@@ -1,0 +1,65 @@
+class Controller_1_4
+
+instance variables
+    ctl_qe : real;  -- water in container
+    ctl_pump_state : nat;
+    ctl_valve_state : nat; 
+
+operations
+
+    public Controller_1_4: () ==> Controller_1_4
+    Controller_1_4() == (
+        ctl_qe := 0;
+        ctl_pump_state := 0;
+        ctl_valve_state := 0; 
+    );
+
+    public MonitorWaterQuantity:() ==> ()
+    MonitorWaterQuantity() == duration(0)(
+        ctl_qe := mySys`boiler.WaterQuantity();
+    );
+
+    public EnsureSafeWaterQuantity: () ==> ()
+    EnsureSafeWaterQuantity() == duration(0)(
+        MonitorWaterQuantity();
+        if ctl_qe < mySys`boiler.N1 then(
+            valveOff();
+            pumpOn();
+        ) else if ctl_qe > mySys`boiler.N2 then(
+            valveOn();
+            pumpOff();
+        ) else (
+            valveOff();
+            pumpOff();            
+        )
+    );
+
+
+    public valveOn: () ==> ()
+    valveOn() == duration(0)(
+        mySys`boiler.valveOn();
+        ctl_valve_state := 1; 
+    ); 
+
+    public valveOff: () ==> ()
+    valveOff() == duration(0)(
+        mySys`boiler.valveOff();
+        ctl_valve_state := 0; 
+    ); 
+
+    public pumpOn: ()==>()
+    pumpOn() == duration(0)(
+        mySys`boiler.pumpOn();
+        ctl_pump_state := 1; 
+    ); 
+    
+    public pumpOff: ()==>()
+    pumpOff() == duration(0)(
+        mySys`boiler.pumpOff();
+        ctl_pump_state := 0; 
+    ); 
+
+thread
+    periodic(2E9,0,0,0)(EnsureSafeWaterQuantity);
+
+end Controller_1_4

@@ -1,4 +1,18 @@
--- system mySys
--- instance variables
---   public static boiler:steamBoiler2 := new steamBoiler2();
---end mySys
+system mySys
+instance variables
+    public static boiler : SteamBoiler_1_4:= new SteamBoiler_1_4();
+    public static controller : Controller_1_4 := new Controller_1_4();
+
+    cpu1 : CPU := new CPU (<FCFS>, 1E9);
+    cpu2 : CPU := new CPU (<FCFS>, 1E9);
+
+    bus1 : BUS := new BUS (<FCFS>, 1E100, {cpu1, cpu2});
+
+    operations 
+        public mySys: () ==> mySys
+        mySys() == (
+            cpu1.deploy(boiler);
+            cpu2.deploy(controller);
+        );
+
+end mySys

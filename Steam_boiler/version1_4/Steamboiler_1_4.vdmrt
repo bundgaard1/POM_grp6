@@ -1,0 +1,87 @@
+class SteamBoiler_1_4
+    
+instance variables
+ 
+    public env_qe : real;  -- water in container
+    env_pump_state : nat;
+    env_valve_state : nat; 
+
+    final_sim_time : real;
+
+values
+
+    C : real = 1000; -- Capacity of container
+    P : real = 10;   -- Pump troughput 
+    V : real = 50;   -- Valve troughput
+
+    public N1 : real = 400;
+    public N2 : real = 600;
+
+operations
+
+    public SteamBoiler_1_4: () ==> SteamBoiler_1_4
+    SteamBoiler_1_4() == (
+        env_qe:= 500; 
+        env_valve_state:= 0;
+        env_pump_state:= 0;
+        final_sim_time:= 0;
+    ); 
+
+    public WaterQuantity:() ==> real
+    WaterQuantity() == duration(0)(
+        return env_qe;
+    );
+
+    public step: () ==> ()
+    step() == duration(0)(
+        dcl delta :real := 0.1;
+        
+
+        dcl delta_qe : real := (env_pump_state * P) - (env_valve_state * V); 
+        dcl next_qe : real := env_qe + delta_qe * delta; 
+
+
+
+        if(next_qe < 0) then (next_qe := 0); 
+
+        env_qe := next_qe; 
+    )
+    post 0 <= env_qe and env_qe <= C; 
+
+    public valveOn: () ==> ()
+    valveOn() == duration(0)(
+        env_valve_state := 1; 
+    ); 
+
+    public valveOff: () ==> ()
+    valveOff() == duration(0)(
+        env_valve_state := 0; 
+    ); 
+
+    public pumpOn: ()==>()
+    pumpOn() == duration(0)(
+        env_pump_state := 1; 
+    ); 
+    
+    public pumpOff: ()==>()
+    pumpOff() == duration(0)(
+        env_pump_state := 0; 
+    ); 
+
+    public isFinished :() ==> ()
+    isFinished() == skip;
+
+    public setFinalSimulationTime: (real) ==> () 
+    setFinalSimulationTime(setTime) == duration(0) (
+        final_sim_time:= setTime;
+    );
+
+thread
+    periodic(1E9,0,0,0)(step);
+
+
+sync
+    per isFinished => (time > final_sim_time);
+
+
+end SteamBoiler_1_4
