@@ -1,4 +1,4 @@
-class RobotArm
+class RobotArm_12
 
 instance variables
 
@@ -14,8 +14,8 @@ values
     I : real = 0.1;   --  Inertia of robot arm should be calculated: I = m*r^2
     
 operations
-    public RobotArm: () ==> RobotArm
-    RobotArm() == (
+    public RobotArm_12: () ==> RobotArm_12
+    RobotArm_12() == (
         env_q := 0;
         env_q_vel := 0;
         
@@ -35,4 +35,4 @@ operations
     );
     -- post M1 <= q and q <= M2;
 
-end RobotArm
+end RobotArm_12

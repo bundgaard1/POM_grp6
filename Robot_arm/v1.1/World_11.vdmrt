@@ -1,0 +1,57 @@
+class World_11
+
+operations 
+
+    -- Perfect
+    public scenario1 : () ==> bool
+    scenario1() == (
+        System_11`robert.setTarget(1);
+        System_11`robert.setKp(0.3);
+        System_11`robert.setKd(8);
+
+        while System_11`robert.t < 100 do
+            System_11`robert.step(0.1);
+
+        return true;
+    );
+
+    -- Overshoot
+    public scenario2 : () ==> bool
+    scenario2() == (
+        System_11`robert.setTarget(1);
+        System_11`robert.setKp(4);
+        System_11`robert.setKd(1);
+
+        while System_11`robert.t < 100 do
+            System_11`robert.step(0.1);
+
+        return true;
+    );
+    
+    -- Undershoot
+    public scenario3 : () ==> bool
+    scenario3() == (
+        System_11`robert.setTarget(1);
+        System_11`robert.setKp(0);
+        System_11`robert.setKd(1);
+
+        while System_11`robert.t < 100 do
+            System_11`robert.step(0.1);
+
+        return true;
+    );
+
+    -- Normal
+    public scenario4 : () ==> bool
+    scenario4() == (
+        System_11`robert.setTarget(1);
+        System_11`robert.setKp(0.3);
+        System_11`robert.setKd(1.5);
+
+        while System_11`robert.t < 100 do
+            System_11`robert.step(0.1);
+
+        return true;
+    );
+    
+end World_11

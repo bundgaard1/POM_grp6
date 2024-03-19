@@ -1,8 +1,0 @@
-system System
-
-instance variables
-
-    public static robert:RobotArm := new RobotArm();
-    public static controller:Controller := new Controller();
-
-end System

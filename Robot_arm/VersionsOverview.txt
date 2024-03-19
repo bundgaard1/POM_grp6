@@ -1,0 +1,25 @@
+Robot Arm project 
+Version History
+
+---
+Model v1.0
+implemented for assigment 1
+
+First simple system boundary definition model.
+Variables kept in sequences for easy priting.
+
+---
+Model v1.1
+implemented for assigment 2
+
+Separated phisical system and environment.
+Itroduced PD-controller for step function.
+New scenarios, to fit to the new controller
+
+---
+Model v1.2
+implemented for assigment 3
+
+Further Separated controller and environment into different files.
+Make controller regulate the tourque set on the motor of the robot arm.
+---

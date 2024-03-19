@@ -1,0 +1,8 @@
+system System_12
+
+instance variables
+
+    public static robert:RobotArm_12 := new RobotArm_12();
+    public static controller:Controller_12 := new Controller_12();
+
+end System_12

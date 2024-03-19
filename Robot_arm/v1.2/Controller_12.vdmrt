@@ -1,4 +1,4 @@
-class Controller
+class Controller_12
 
 instance variables
 
@@ -6,8 +6,8 @@ instance variables
 
     public ctl_q_target : real;  -- taget angel of the arm in radians 
    
-    Kp : real; -- Proportional factor BEREGN VIA IRT
-    Kd : real; -- derivative factor BEREGN VHA IRT
+    Kp : real; -- Proportional factor 
+    Kd : real; -- derivative factor 
    
     e_last : real;  -- error at last control
 
@@ -20,8 +20,8 @@ values
 
 operations
 
-    public Controller: () ==> Controller
-    Controller() == (
+    public Controller_12: () ==> Controller_12
+    Controller_12() == (
         ctl_q := 0;
         ctl_q_target := ctl_q;
         e_last := 0;
@@ -41,7 +41,7 @@ operations
     public MonitorArmAngle : () ==> ()
     MonitorArmAngle() == duration(0)(
         -- Implement       
-        ctl_q := System`robert.env_q;
+        ctl_q := System_12`robert.env_q;
     );
 
 
@@ -64,7 +64,7 @@ operations
         t_motor2 := Kd * de;
 
         -- Set Tourqe on world
-        System`robert.env_motor_tourqe := t_motor1 + t_motor2;
+        System_12`robert.env_motor_tourqe := t_motor1 + t_motor2;
 
         e_last := e;
     );
@@ -80,4 +80,4 @@ operations
         Kp := newKp;
     );
 
-end Controller
+end Controller_12

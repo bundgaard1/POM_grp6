@@ -1,7 +1,7 @@
 system mySys
 instance variables
-    public static boiler : SteamBoiler_1_4:= new SteamBoiler_1_4();
-    public static controller : Controller_1_4 := new Controller_1_4();
+    public static boiler : SteamBoiler_1_6:= new SteamBoiler_1_6();
+    public static controller : Controller_1_6 := new Controller_1_6();
 
     cpu1 : CPU := new CPU (<FCFS>, 1E9);
     cpu2 : CPU := new CPU (<FCFS>, 1E9);

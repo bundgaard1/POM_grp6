@@ -1,0 +1,91 @@
+class SteamBoiler_1_6
+
+types
+    public ValveState = <Open> | <Closed>;
+    public PumpState = <On> | <Off>;
+    
+instance variables
+ 
+    public env_qe : real;  -- water in container
+    public env_pump_state : PumpState;
+    public env_valve_state : ValveState; 
+
+    final_sim_time : real;
+
+values
+
+    C : real = 1000; -- Capacity of container
+    P : real = 10;   -- Pump troughput 
+    V : real = 50;   -- Valve troughput
+
+    public N1 : real = 400;
+    public N2 : real = 600;
+
+operations
+
+    public SteamBoiler_1_6: () ==> SteamBoiler_1_6
+    SteamBoiler_1_6() == (
+        env_qe:= 500; 
+        env_valve_state:= <Closed>;
+        env_pump_state:= <Off>;
+        final_sim_time:= 0;
+    ); 
+
+    public WaterQuantity:() ==> real
+    WaterQuantity() == duration(0)(
+        return env_qe;
+    );
+
+    public step: () ==> ()
+    step() == duration(0)(
+        dcl delta :real := 0.1;
+        
+
+        dcl delta_qe : real := (env_pump_state * P) - (env_valve_state * V); 
+        dcl next_qe : real := env_qe + delta_qe * delta; 
+
+
+
+        if(next_qe < 0) then (next_qe := 0); 
+
+        env_qe := next_qe; 
+    )
+    post 0 <= env_qe and env_qe <= C; 
+
+    public SetValveState: () ==> ValveState 
+    SetValveState() == duration(0)(
+        return env_valve_state 
+    ); 
+
+    public SetPumpState: () ==> PumpState
+    SetPumpState() == duration(0)(
+        return env_pump_state; 
+    );
+     
+    public GetValveState: () ==> ValveState 
+    GetValveState() == duration(0)(
+        return env_valve_state; 
+    ); 
+
+    public GetPumpState: () ==> PumpState
+    GetPumpState() == duration(0)(
+        return env_pump_state; 
+    ); 
+
+    public isFinished :() ==> ()
+    isFinished() == skip;
+
+    public setFinalSimulationTime: (real) ==> () 
+    setFinalSimulationTime(setTime) == duration(0) (
+        final_sim_time:= setTime;
+    );
+
+thread
+    periodic(1E9,0,0,0)(step);
+
+
+sync
+    per isFinished => (time > final_sim_time);
+
+
+end SteamBoiler_1_6

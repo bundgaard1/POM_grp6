@@ -1,0 +1,53 @@
+class Controller_1_6
+
+instance variables
+    public ctl_qe : real;  -- water in container
+    public ctl_pump_state :  SteamBoiler_1_6`PumpState;
+    public ctl_valve_state : SteamBoiler_1_6`ValveState; 
+
+operations
+
+    public Controller_1_6: () ==> Controller_1_6
+    Controller_1_6() == (
+        ctl_qe := 0;
+        ctl_pump_state := <On>;
+        ctl_valve_state := <Open>; 
+    );
+
+    public MonitorWaterQuantity:() ==> ()
+    MonitorWaterQuantity() == duration(0)(
+        ctl_qe := mySys`boiler.WaterQuantity();
+    );
+
+    public EnsureSafeWaterQuantity: () ==> ()
+    EnsureSafeWaterQuantity() == duration(0)(
+        MonitorWaterQuantity();
+        if ctl_qe < mySys`boiler.N1 then(
+            valveOff();
+            pumpOn();
+        ) else if ctl_qe > mySys`boiler.N2 then(
+            valveOn();
+            pumpOff();
+        ) else (
+            valveOff();
+            pumpOff();            
+        )
+    );
+
+
+    public SetValveState: SteamBoiler_1_6`ValveState ==> ()
+    SetValveState(s) == duration(0)(
+        mySys`boiler.SetValveState(s);
+        ctl_valve_state := s; 
+    ); 
+
+    public SetPumpState: SteamBoiler_1_6`PumpState==>()
+    SetPumpState(s) == duration(0)(
+        mySys`boiler.SetPumpState(s);
+        ctl_pump_state := s; 
+    ); 
+
+thread
+    periodic(2E9,0,0,0)(EnsureSafeWaterQuantity);
+
+end Controller_1_6

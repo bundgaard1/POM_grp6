@@ -1,0 +1,7 @@
+system System_11
+
+instance variables
+
+    public static  robert:RobotArm_11 := new RobotArm_11();
+    
+end System_11

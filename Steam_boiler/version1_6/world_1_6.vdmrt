@@ -1,0 +1,17 @@
+class world1_6
+
+operations
+    public scenario1 : () ==> real
+    scenario1() == (
+        mySys`boiler.env_qe := 800;
+    
+        mySys`boiler.setFinalSimulationTime(500E9);
+        start(mySys`boiler);
+        start(mySys`controller);
+
+
+        mySys`boiler.isFinished();
+
+        return mySys`boiler.env_qe; 
+    )
+end world1_6
