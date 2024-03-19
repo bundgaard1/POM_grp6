@@ -23,31 +23,32 @@ operations
     EnsureSafeWaterQuantity() == duration(0)(
         MonitorWaterQuantity();
         if ctl_qe < mySys`boiler.N1 then(
-            valveOff();
-            pumpOn();
+            SetValveState(<Open>);
+            SetPumpState(<On>);
         ) else if ctl_qe > mySys`boiler.N2 then(
-            valveOn();
-            pumpOff();
+            SetValveState(<Open>);
+            SetPumpState(<Off>);
         ) else (
-            valveOff();
-            pumpOff();            
-        )
+            SetValveState(<Closed>);
+            SetPumpState(<Off>); 
+        );         
     );
 
 
     public SetValveState: SteamBoiler_1_6`ValveState ==> ()
-    SetValveState(s) == duration(0)(
-        mySys`boiler.SetValveState(s);
-        ctl_valve_state := s; 
+    SetValveState(vs) == duration(0)(
+        mySys`boiler.SetValveState(vs);
+        ctl_valve_state := mySys`boiler.GetValveState(); 
     ); 
 
     public SetPumpState: SteamBoiler_1_6`PumpState==>()
-    SetPumpState(s) == duration(0)(
-        mySys`boiler.SetPumpState(s);
-        ctl_pump_state := s; 
+    SetPumpState(ps) == duration(0)(
+        mySys`boiler.SetPumpState(ps);
+        ctl_pump_state := mySys`boiler.GetPumpState(); 
     ); 
 
 thread
     periodic(2E9,0,0,0)(EnsureSafeWaterQuantity);
 
 end Controller_1_6
+

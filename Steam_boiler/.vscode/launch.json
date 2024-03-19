@@ -1,12 +1,12 @@
 {
     "configurations": [
         {
-            "name": "Lens config: Launch world1_4`scenario1",
+            "name": "Lens config: Debug SteamBoiler_1_6`GetPumpState",
             "type": "vdm",
             "request": "launch",
-            "noDebug": true,
-            "defaultName": "world1_4",
-            "command": "p new world1_4().scenario1()"
+            "noDebug": false,
+            "defaultName": "SteamBoiler_1_6",
+            "command": "p new SteamBoiler_1_6().GetPumpState()"
         }
     ]
 }

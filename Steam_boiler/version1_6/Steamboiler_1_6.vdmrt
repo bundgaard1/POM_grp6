@@ -38,41 +38,43 @@ operations
 
     public step: () ==> ()
     step() == duration(0)(
-        dcl delta :real := 0.1;
+        dcl delta : real := 0.1;
+
+        dcl pf : nat := 0;   -- Pump flow    
+        dcl vf : nat := 0;   -- Valve flow
+        dcl dqe : real := 0; -- Change of water level
+
+        if(env_pump_state = <On>)    then (pf:=1);
+        if(env_valve_state = <Open>) then (vf:=1);
+
+        dqe := (pf * P) - (vf * V);
         
-
-        dcl delta_qe : real := (env_pump_state * P) - (env_valve_state * V); 
-        dcl next_qe : real := env_qe + delta_qe * delta; 
-
-
-
-        if(next_qe < 0) then (next_qe := 0); 
-
-        env_qe := next_qe; 
+        env_qe := env_qe + dqe * delta; 
+        if(env_qe < 0) then (env_qe := 0); 
     )
     post 0 <= env_qe and env_qe <= C; 
 
-    public SetValveState: () ==> ValveState 
-    SetValveState() == duration(0)(
-        return env_valve_state 
+    public SetValveState: (ValveState) ==> ()
+    SetValveState(vs) == duration(0)(
+        env_valve_state := vs; 
     ); 
 
-    public SetPumpState: () ==> PumpState
-    SetPumpState() == duration(0)(
-        return env_pump_state; 
+    public SetPumpState: (PumpState) ==> ()
+    SetPumpState(vs) == duration(0)(
+        env_pump_state := vs; 
     );
      
-    public GetValveState: () ==> ValveState 
+    public GetValveState: () ==> (ValveState) 
     GetValveState() == duration(0)(
         return env_valve_state; 
     ); 
 
-    public GetPumpState: () ==> PumpState
+    public GetPumpState: () ==> (PumpState)
     GetPumpState() == duration(0)(
         return env_pump_state; 
     ); 
 
-    public isFinished :() ==> ()
+    public isFinished : () ==> ()
     isFinished() == skip;
 
     public setFinalSimulationTime: (real) ==> () 
@@ -80,8 +82,9 @@ operations
         final_sim_time:= setTime;
     );
 
+
 thread
-    periodic(1E9,0,0,0)(step);
+    periodic(1E8,0,0,0)(step);
 
 
 sync
