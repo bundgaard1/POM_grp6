@@ -2,9 +2,9 @@ class Controller_13
 
 instance variables
 
-    public ctl_q : real;       -- angle of arm in radians
+    private ctl_q : real;       -- angle of arm in radians
 
-    public ctl_q_target : real;  -- taget angel of the arm in radians 
+    private ctl_q_target : real;  -- taget angel of the arm in radians 
    
     Kp : real; -- Proportional factor 
     Kd : real; -- derivative factor 
@@ -39,7 +39,7 @@ operations
     public MonitorArmAngle : () ==> ()
     MonitorArmAngle() == duration(0)(
         -- Implement       
-        ctl_q := System_13`robert.env_q;
+        ctl_q := System_13`robert.GetArmAngle();
     );
 
 
@@ -62,7 +62,7 @@ operations
         t_motor2 := Kd * de;
 
         -- Set Tourqe on world
-        System_13`robert.env_motor_tourqe := t_motor1 + t_motor2;
+        System_13`robert.setTorque(t_motor1 + t_motor2);
 
         e_last := e;
     );
