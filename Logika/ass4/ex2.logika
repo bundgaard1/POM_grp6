@@ -1,0 +1,36 @@
+import org.sireum.logika._
+
+val M1: Z = readInt()
+val M2: Z = readInt()
+
+var pumpState: Z = readInt()
+var valveState: Z = readInt()
+
+var q: Z = readInt()
+var qVel: Z = readInt()
+var qAcc: Z = readInt()
+
+def step(timeFactor: Z): Unit = {
+    l"""{
+        pre M1 <= q
+            q <= M2
+            M1 <= q + (qVel+qAcc * timeFactor) * timeFactor
+            q + (qVel+qAcc * timeFactor) * timeFactor <= M2
+
+        modifies q
+        post M1 <= q ∧ q <= M2
+    }"""
+    q = q + (qVel+qAcc * timeFactor) * timeFactor
+    l"""{
+        1. M1 <= q_old                                         premise
+        2. M1 <= q_old + (qVel+qAcc * timeFactor) * timeFactor premise
+        3. q == q_old + (qVel+qAcc * timeFactor) * timeFactor  premise
+        10. M1 <= q                                            algebra 1 2 3
+
+        11. q_old <= M2                                         premise
+        12. q_old + (qVel+qAcc * timeFactor) * timeFactor <= M2 premise
+        13. q == q_old + (qVel+qAcc * timeFactor) * timeFactor  premise
+        21. q <= M2                                             algebra 11 12 13
+        22. M1 <= q ∧ q <= M2                                   ∧i 10 21
+    }"""
+}

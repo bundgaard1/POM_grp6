@@ -1,4 +1,4 @@
-class RobotArm_13
+class RobotArm_13    
 
 instance variables
 
@@ -22,7 +22,6 @@ operations
         env_motor_tourqe := 0;
 
     );
-
 
     public step: (real) ==> ()
     step(delta) == duration(0)(
