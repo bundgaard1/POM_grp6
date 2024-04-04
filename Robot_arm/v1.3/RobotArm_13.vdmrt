@@ -2,10 +2,10 @@ class RobotArm_13
 
 instance variables
 
-    public env_q : real;       -- angle of arm in radians
-    public env_q_vel : real;   -- velocity of arm in rad/Seq
+    private env_q : real;       -- angle of arm in radians
+    private env_q_vel : real;   -- velocity of arm in rad/Seq
    
-    public env_motor_tourqe : real;  -- Tourqe applied on arm joint
+    private env_motor_tourqe : real;  -- Tourqe applied on arm joint
 
 values
     M1 : real = -0.2; -- Minimum limit for arm
@@ -33,5 +33,16 @@ operations
         env_q := env_q + env_q_vel * delta;
     );
     -- post M1 <= q and q <= M2;
+
+    public setTorque : (real) ==> ()
+    setTorque(torque) == duration(0)(
+
+        env_motor_tourqe := torque;        
+    );
+
+    public GetArmAngle : () ==> (real)
+    GetArmAngle() == duration(0)(
+        return env_q;
+    );
 
 end RobotArm_13

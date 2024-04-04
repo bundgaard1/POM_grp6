@@ -23,3 +23,7 @@ implemented for assigment 3
 Further Separated controller and environment into different files.
 Make controller regulate the tourque set on the motor of the robot arm.
 ---
+Model v1.3
+Implementd for assignment 4
+
+Made the model concurrent, and shifted away from a user-centric perspective to a controller-centric perspective.
