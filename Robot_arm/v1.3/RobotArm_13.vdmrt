@@ -1,0 +1,38 @@
+class RobotArm_13
+
+instance variables
+
+    public env_q : real;       -- angle of arm in radians
+    public env_q_vel : real;   -- velocity of arm in rad/Seq
+   
+    public env_motor_tourqe : real;  -- Tourqe applied on arm joint
+
+values
+    M1 : real = -0.2; -- Minimum limit for arm
+    M2 : real = 1.77; -- Maximum limit for arm
+
+    I : real = 0.1;   --  Inertia of robot arm should be calculated: I = m*r^2
+    
+operations
+    public RobotArm_13: () ==> RobotArm_13
+    RobotArm_13() == (
+        env_q := 0;
+        env_q_vel := 0;
+        
+        env_motor_tourqe := 0;
+
+    );
+
+
+    public step: (real) ==> ()
+    step(delta) == duration(0)(
+  
+        dcl q_acc : real := env_motor_tourqe / I;    -- calculate acceleration based on tourqe
+
+        env_q_vel := env_q_vel + q_acc * delta;  -- Update 
+
+        env_q := env_q + env_q_vel * delta;
+    );
+    -- post M1 <= q and q <= M2;
+
+end RobotArm_13
