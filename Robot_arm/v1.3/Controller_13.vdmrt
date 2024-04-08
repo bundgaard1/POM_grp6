@@ -30,21 +30,21 @@ operations
     );
 
     public setTarget : (real) ==> ()
-    setTarget(new_target) == duration(0)(
+    setTarget(new_target) == duration(1E8)(
 
         if N1 < new_target and new_target < N2 then
             ctl_q_target := new_target;
     );
 
     public MonitorArmAngle : () ==> ()
-    MonitorArmAngle() == duration(0)(
+    MonitorArmAngle() == duration(1E8)(
         -- Implement       
         ctl_q := System_13`robert.GetArmAngle();
     );
 
 
     public ControlTheMotor : () ==> ()
-    ControlTheMotor() == duration(0)(
+    ControlTheMotor() == duration(2E8)(
         dcl e : real;
         dcl t_motor1 : real;
         dcl de : real;       
