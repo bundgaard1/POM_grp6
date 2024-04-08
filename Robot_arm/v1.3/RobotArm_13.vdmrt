@@ -7,6 +7,8 @@ instance variables
    
     private env_motor_tourqe : real;  -- Tourqe applied on arm joint
 
+    private last_time : real;  -- A record of the last time the operation (in this case step) was called
+
 values
     M1 : real = -0.2; -- Minimum limit for arm
     M2 : real = 1.77; -- Maximum limit for arm
@@ -21,12 +23,19 @@ operations
         
         env_motor_tourqe := 0;
 
+        last_time := 0;
     );
 
     public step: (real) ==> ()
-    step(delta) == duration(0)(
-  
+    step() == duration(0)(
+
+        dcl t : real := time / 1E9;  -- Calculate the current time
+        dcl delta : real := t - last_time; -- Calculates delta
+       
         dcl q_acc : real := env_motor_tourqe / I;    -- calculate acceleration based on tourqe
+
+        last_time := t; -- Updates last_time
+  
 
         env_q_vel := env_q_vel + q_acc * delta;  -- Update 
 
@@ -35,13 +44,13 @@ operations
     -- post M1 <= q and q <= M2;
 
     public setTorque : (real) ==> ()
-    setTorque(torque) == duration(0)(
+    setTorque(torque) == duration(2E8)(
 
         env_motor_tourqe := torque;        
     );
 
     public GetArmAngle : () ==> (real)
-    GetArmAngle() == duration(0)(
+    GetArmAngle() == duration(1E8)(
         return env_q;
     );
 

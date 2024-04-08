@@ -5,4 +5,16 @@ instance variables
     public static robert:RobotArm_13 := new RobotArm_13();
     public static controller:Controller_13 := new Controller_13();
 
+    cpu1 : CPU := new CPU(<FCFS>,1E9);
+    cpu2 : CPU := new CPU(<FCFS>,1E9);
+
+    bus1 : BUS := new BUS(<FCFS>, 1E100, {cpu1, cpu2})
+
+operations
+    public System_13: () ==> System_13
+    System_13() == (
+        cpu1.deploy(robert);
+        cpu2.deploy(controller);
+    );
+
 end System_13
