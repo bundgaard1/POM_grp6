@@ -2,29 +2,37 @@ class World_13
 
 instance variables
     io : IO := new IO();
+    curr_time: real := 0;
 
 operations
 
-    public scenario0 :() ==> bool 
-    scenario0() == (
-        echoState(0);
-        return true;
+    public UpdateTimeStamp : () ==>  () 
+    UpdateTimeStamp() == duration(0) (
+        curr_time := time / 1E9;
     );
 
+    public scenario0 :() ==> bool 
+    scenario0() == (
+        echoState();    
+        return true;
+    );
 
     public scenario1 : () ==> bool
     scenario1() == (
         dcl i : real := 0;
 
         System_13`controller.setTarget(1);
-        System_13`controller.setKd(5);
-        System_13`controller.setKp(0.3);
+        System_13`controller.setKd(0.8);
+        System_13`controller.setKp(0.1);
 
         while i < 100 do(
+            UpdateTimeStamp();
+            StateToFile('1');
+            System_13`robert.step();
+            UpdateTimeStamp();
             System_13`controller.MonitorArmAngle();
+            UpdateTimeStamp();
             System_13`controller.ControlTheMotor();
-            System_13`robert.step(0.1);
-            StateToFile('1',i);
             i := i+1;
         );
         
@@ -37,14 +45,17 @@ operations
         dcl i : real := 0;
 
         System_13`controller.setTarget(1);
-        System_13`controller.setKd(0.5);
-        System_13`controller.setKp(2);
+        System_13`controller.setKd(4);
+        System_13`controller.setKp(0.3);
 
         while i < 100 do(
+            UpdateTimeStamp();
+            StateToFile('2');
             System_13`controller.MonitorArmAngle();
+            UpdateTimeStamp();
             System_13`controller.ControlTheMotor();
-            System_13`robert.step(0.1);
-            StateToFile('2',i);
+            UpdateTimeStamp();
+            System_13`robert.step();
             i := i+1;
         );
         
@@ -57,14 +68,15 @@ operations
         dcl i : real := 0;
 
         System_13`controller.setTarget(1);
-        System_13`controller.setKd(1);
-        System_13`controller.setKp(0);
+        System_13`controller.setKd(0.2);
+        System_13`controller.setKp(0.05);
 
-        while i < 100 do(
+        while i < 300 do(
+            UpdateTimeStamp();
+            StateToFile('3');
             System_13`controller.ControlTheMotor();
             System_13`controller.MonitorArmAngle();
-            System_13`robert.step(0.1);
-            StateToFile('3',i);
+            System_13`robert.step();
             i := i+1;
         );
         
@@ -77,14 +89,15 @@ operations
         dcl i : real := 0;
 
         System_13`controller.setTarget(1);
-        System_13`controller.setKd(1.5);
-        System_13`controller.setKp(0.3);
+        System_13`controller.setKd(0.5);
+        System_13`controller.setKp(0.5);
 
-        while i < 100 do(
+        while i < 300 do(
+            UpdateTimeStamp();
             System_13`controller.MonitorArmAngle();
             System_13`controller.ControlTheMotor();
-            System_13`robert.step(0.1);
-            StateToFile('4',i);
+            System_13`robert.step();
+            StateToFile('4');
             i := i+1;
         );
         
@@ -101,11 +114,13 @@ operations
 
         while i < 15 do(
             dcl j : real := 0;
+            UpdateTimeStamp();  
             System_13`controller.MonitorArmAngle();
             while j < 10 do(
-                StateToFile('5',i*10+j);
+                UpdateTimeStamp();
+                StateToFile('5');
                 System_13`controller.ControlTheMotor();
-                System_13`robert.step(0.1);
+                System_13`robert.step();
                 j := j+1;
             );
             i := i+1;
@@ -122,11 +137,12 @@ operations
         System_13`controller.setKd(2);
         System_13`controller.setKp(0.2);
 
-        while i < 100 do(
-            StateToFile('6',i);
+        while i < 300 do(
+            UpdateTimeStamp();
+            StateToFile('6');
             System_13`controller.MonitorArmAngle();
             System_13`controller.ControlTheMotor();
-            System_13`robert.step(0.1);
+            System_13`robert.step();
             i := i+1;
         );
         
@@ -142,22 +158,21 @@ operations
         System_13`controller.setKp(0.2);
 
         while i < 100 do(
-            StateToFile('7',i);
+            UpdateTimeStamp();
+            StateToFile('7');
             System_13`controller.MonitorArmAngle();
             System_13`controller.ControlTheMotor();
-            System_13`robert.step(0.1);
+            System_13`robert.step();
             i := i+1;
         );
         
         return true; 
     );
 
-    
-    public echoState : (int) ==> ()
-    echoState(counter) == (
+    public stateString :() ==> seq of char
+    stateString() == (
         dcl str : seq of char := "";
-        dcl succ : bool;
-        str := str ^ VDMUtil`val2seq_of_char[int](counter); -- time
+        str := str ^ VDMUtil`val2seq_of_char[real](curr_time); -- time
         str := str ^ " ";
         str := str ^ VDMUtil`val2seq_of_char[real](System_13`controller.ctl_q); -- controller angle
         str := str ^ " ";
@@ -169,30 +184,21 @@ operations
         str := str ^ " ";
         str := str ^ VDMUtil`val2seq_of_char[real](System_13`robert.env_motor_tourqe); -- motor torque
         str := str ^ "\n";
+        return str
+    );
+    
+    public echoState : () ==> ()
+    echoState() == (
+        dcl succ : bool;
+        dcl str : seq of char := stateString();
         succ := io.echo(str); 
     );
 
-    public StateToFile : (char) * (int) ==> ()
-    StateToFile(scenario, counter) == (
-        dcl str : seq of char := "";
+    public StateToFile : (char)  ==> ()
+    StateToFile(scenario) == (
         dcl succ : bool;
-        str := str ^ VDMUtil`val2seq_of_char[int](counter); -- controller angle
-        str := str ^ " ";
-        str := str ^ VDMUtil`val2seq_of_char[real](System_13`controller.ctl_q); -- controller angle
-        str := str ^ " ";
-        str := str ^ VDMUtil`val2seq_of_char[real](System_13`controller.ctl_q_target); -- controller velocity 
-        str := str ^ " ";
-        str := str ^ VDMUtil`val2seq_of_char[real](System_13`robert.env_q);-- arm angle
-        str := str ^ " ";
-        str := str ^ VDMUtil`val2seq_of_char[real](System_13`robert.env_q_vel); -- arm velocity
-        str := str ^ " ";
-        str := str ^ VDMUtil`val2seq_of_char[real](System_13`robert.env_motor_tourqe); -- time
-        str := str ^ "\n";
+        dcl str : seq of char := stateString();
         succ := io.fecho("../senarios/" ^ [scenario] ^ ".txt",str,<append>); 
     );
-
-
-
-
 
 end World_13

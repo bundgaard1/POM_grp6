@@ -2,9 +2,9 @@ class Controller_13
 
 instance variables
 
-    private ctl_q : real;       -- angle of arm in radians
+    public ctl_q : real;       -- angle of arm in radians
 
-    private ctl_q_target : real;  -- taget angel of the arm in radians 
+    public ctl_q_target : real;  -- taget angel of the arm in radians 
    
     Kp : real; -- Proportional factor 
     Kd : real; -- derivative factor 
@@ -30,21 +30,21 @@ operations
     );
 
     public setTarget : (real) ==> ()
-    setTarget(new_target) == duration(1E8)(
+    setTarget(new_target) == duration(1E7)(
 
         if N1 < new_target and new_target < N2 then
             ctl_q_target := new_target;
     );
 
     public MonitorArmAngle : () ==> ()
-    MonitorArmAngle() == duration(1E8)(
+    MonitorArmAngle() == duration(1E7)(
         -- Implement       
         ctl_q := System_13`robert.GetArmAngle();
     );
 
 
     public ControlTheMotor : () ==> ()
-    ControlTheMotor() == duration(2E8)(
+    ControlTheMotor() == duration(2E7)(
         dcl e : real;
         dcl t_motor1 : real;
         dcl de : real;       
