@@ -1,0 +1,81 @@
+class Controller_2
+
+instance variables
+
+    public ctl_q : real;       -- angle of arm in radians
+
+    public ctl_q_target : real;  -- taget angel of the arm in radians 
+   
+    Kp : real; -- Proportional factor 
+    Kd : real; -- derivative factor 
+   
+    e_last : real;  -- error at last control
+
+values 
+
+    N1 : real = 0;    -- minimum limit for target
+    N2 : real = 1.57; -- maximum limit for target
+
+operations
+
+    public Controller_2: () ==> Controller_2
+    Controller_2() == (
+        ctl_q := 0;
+        ctl_q_target := ctl_q;
+        e_last := 0;
+
+        Kp := 1;
+        Kd := 1;
+
+    );
+
+    public setTarget : (real) ==> ()
+    setTarget(new_target) == duration(1E7)(
+
+        if N1 < new_target and new_target < N2 then
+            ctl_q_target := new_target;
+    );
+
+    public MonitorArmAngle : () ==> ()
+    MonitorArmAngle() == duration(1E7)(
+        -- Implement       
+        ctl_q := System_2`robert.GetArmAngle();
+    );
+
+
+    public ControlTheMotor : () ==> ()
+    ControlTheMotor() == duration(2E7)(
+        dcl e : real;
+        dcl t_motor1 : real;
+        dcl de : real;       
+        dcl t_motor2 : real;
+
+        -- PD controller
+
+        e := ctl_q_target - ctl_q;           -- error from e(t_i) 
+        
+        -- Proportional
+        t_motor1 := Kp * e;
+
+        -- Derivative
+        de := e - e_last;         -- change of error    
+        t_motor2 := Kd * de;
+
+        -- Set Tourqe on world
+        System_2`robert.setTorque(t_motor1 + t_motor2);
+
+        e_last := e;
+    );
+
+
+    public setKd : (real) ==> ()
+    setKd(newKd) == duration(0)(
+        Kd := newKd;
+    );
+
+    public setKp : (real) ==> ()
+    setKp(newKp) == duration(0)(
+        Kp := newKp;
+    );
+
+end Controller_2

@@ -29,4 +29,4 @@ Implementd for assignment 4
 Made the model concurrent, and shifted away from a user-centric perspective to a controller-centric perspective.
 Implemented real time durations for the various operations
 ---
-Model v1.4
+Model v2.0

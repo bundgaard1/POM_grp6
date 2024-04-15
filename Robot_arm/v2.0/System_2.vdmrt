@@ -1,0 +1,20 @@
+system System_2
+
+instance variables
+
+    public static robert:RobotArm_2 := new RobotArm_2();
+    public static controller:Controller_2 := new Controller_2();
+
+    cpu1 : CPU := new CPU(<FCFS>,1E9);
+    cpu2 : CPU := new CPU(<FCFS>,1E9);
+
+    bus1 : BUS := new BUS(<FCFS>, 1E100, {cpu1, cpu2})
+
+operations
+    public System_2: () ==> System_2
+    System_2() == (
+        cpu1.deploy(robert);
+        cpu2.deploy(controller);
+    );
+
+end System_2

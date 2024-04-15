@@ -1,0 +1,204 @@
+class World_2
+
+instance variables
+    io : IO := new IO();
+    curr_time: real := 0;
+
+operations
+
+    public UpdateTimeStamp : () ==>  () 
+    UpdateTimeStamp() == duration(0) (
+        curr_time := time / 1E9;
+    );
+
+    public scenario0 :() ==> bool 
+    scenario0() == (
+        echoState();    
+        return true;
+    );
+
+    public scenario1 : () ==> bool
+    scenario1() == (
+        dcl i : real := 0;
+
+        System_2`controller.setTarget(1);
+        System_2`controller.setKd(0.8);
+        System_2`controller.setKp(0.1);
+
+        while i < 100 do(
+            UpdateTimeStamp();
+            StateToFile('1');
+            System_2`robert.step();
+            UpdateTimeStamp();
+            System_2`controller.MonitorArmAngle();
+            UpdateTimeStamp();
+            System_2`controller.ControlTheMotor();
+            i := i+1;
+        );
+        
+        return true;
+    );
+
+
+    public scenario2 : () ==> bool
+    scenario2() == (
+        dcl i : real := 0;
+
+        System_2`controller.setTarget(1);
+        System_2`controller.setKd(4);
+        System_2`controller.setKp(0.3);
+
+        while i < 100 do(
+            UpdateTimeStamp();
+            StateToFile('2');
+            System_2`controller.MonitorArmAngle();
+            UpdateTimeStamp();
+            System_2`controller.ControlTheMotor();
+            UpdateTimeStamp();
+            System_2`robert.step();
+            i := i+1;
+        );
+        
+        return true;
+    );
+
+
+    public scenario3 : () ==> bool
+    scenario3() == (
+        dcl i : real := 0;
+
+        System_2`controller.setTarget(1);
+        System_2`controller.setKd(0.2);
+        System_2`controller.setKp(0.05);
+
+        while i < 300 do(
+            UpdateTimeStamp();
+            StateToFile('3');
+            System_2`controller.ControlTheMotor();
+            System_2`controller.MonitorArmAngle();
+            System_2`robert.step();
+            i := i+1;
+        );
+        
+        return true;
+    );
+
+    -- Perfect
+    public scenario4 : () ==> bool
+    scenario4() == (
+        dcl i : real := 0;
+
+        System_2`controller.setTarget(1);
+        System_2`controller.setKd(0.5);
+        System_2`controller.setKp(0.5);
+
+        while i < 300 do(
+            UpdateTimeStamp();
+            System_2`controller.MonitorArmAngle();
+            System_2`controller.ControlTheMotor();
+            System_2`robert.step();
+            StateToFile('4');
+            i := i+1;
+        );
+        
+        return true;
+    );
+
+    public scenario5 : () ==> bool
+    scenario5() == (
+        dcl i : real := 0;
+
+        System_2`controller.setTarget(1);
+        System_2`controller.setKd(1);
+        System_2`controller.setKp(0.1);
+
+        while i < 15 do(
+            dcl j : real := 0;
+            UpdateTimeStamp();  
+            System_2`controller.MonitorArmAngle();
+            while j < 10 do(
+                UpdateTimeStamp();
+                StateToFile('5');
+                System_2`controller.ControlTheMotor();
+                System_2`robert.step();
+                j := j+1;
+            );
+            i := i+1;
+        );
+        
+        return true; 
+    );
+
+    public scenario6 : () ==> bool
+    scenario6() == (
+        dcl i : real := 0;
+
+        System_2`controller.setTarget(1);
+        System_2`controller.setKd(2);
+        System_2`controller.setKp(0.2);
+
+        while i < 300 do(
+            UpdateTimeStamp();
+            StateToFile('6');
+            System_2`controller.MonitorArmAngle();
+            System_2`controller.ControlTheMotor();
+            System_2`robert.step();
+            i := i+1;
+        );
+        
+        return true; 
+    );
+
+    public scenario7 : () ==> bool
+    scenario7() == (
+        dcl i : real := 0;
+
+        System_2`controller.setTarget(1);
+        System_2`controller.setKd(1);
+        System_2`controller.setKp(0.2);
+
+        while i < 100 do(
+            UpdateTimeStamp();
+            StateToFile('7');
+            System_2`controller.MonitorArmAngle();
+            System_2`controller.ControlTheMotor();
+            System_2`robert.step();
+            i := i+1;
+        );
+        
+        return true; 
+    );
+
+    public stateString :() ==> seq of char
+    stateString() == (
+        dcl str : seq of char := "";
+        str := str ^ VDMUtil`val2seq_of_char[real](curr_time); -- time
+        str := str ^ " ";
+        str := str ^ VDMUtil`val2seq_of_char[real](System_2`controller.ctl_q); -- controller angle
+        str := str ^ " ";
+        str := str ^ VDMUtil`val2seq_of_char[real](System_2`controller.ctl_q_target); -- next controller angle
+        str := str ^ " ";
+        str := str ^ VDMUtil`val2seq_of_char[real](System_2`robert.env_q);-- arm angle
+        str := str ^ " ";
+        str := str ^ VDMUtil`val2seq_of_char[real](System_2`robert.env_q_vel); -- arm velocity
+        str := str ^ " ";
+        str := str ^ VDMUtil`val2seq_of_char[real](System_2`robert.env_motor_tourqe); -- motor torque
+        str := str ^ "\n";
+        return str
+    );
+    
+    public echoState : () ==> ()
+    echoState() == (
+        dcl succ : bool;
+        dcl str : seq of char := stateString();
+        succ := io.echo(str); 
+    );
+
+    public StateToFile : (char)  ==> ()
+    StateToFile(scenario) == (
+        dcl succ : bool;
+        dcl str : seq of char := stateString();
+        succ := io.fecho("../senarios/" ^ [scenario] ^ ".txt",str,<append>); 
+    );
+
+end World_2
