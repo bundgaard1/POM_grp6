@@ -1,0 +1,31 @@
+class Angle_sensor_2
+instance variables
+    public snr_q : real; --sensor value of arm angle
+
+operations
+    public Angle_sensor_2: () ==> Angle_sensor_2
+    Angle_sensor_2() == (
+        snr_q := 0;
+    );
+
+    -- Updates snr_q value
+    public readArmAngle: () ==> ()
+    readArmAngle() == duration(1E8)(
+        snr_q := System_2`env.getArmAngle();
+    );
+
+    public getArmAngle: () ==> real
+    getArmAngle() == duration(1E8)(
+        return snr_q;
+    );
+
+
+    public step: () ==> ()
+    step() == duration(0)(
+        readArmAngle();
+    )
+
+thread
+    periodic(2,0,0,0)(step);
+
+end Angle_sensor_2
