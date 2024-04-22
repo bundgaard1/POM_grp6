@@ -3,6 +3,8 @@ class Controller_2
 instance variables
 
     public ctl_q : real;       -- angle of arm in radians
+    public ctl_q_vel : real;
+    public ctl_q_acc : real;
 
     public ctl_q_target : real;  -- taget angel of the arm in radians 
    
@@ -16,11 +18,17 @@ values
     N1 : real = 0;    -- minimum limit for target
     N2 : real = 1.57; -- maximum limit for target
 
+    I : real = 0.1;     -- Inertia of robot arm should be calculated: I = m*r^2
+    m : real = 0.1;     -- Mass 
+    r : real = 1;       -- Length
+
 operations
 
     public Controller_2: () ==> Controller_2
     Controller_2() == (
         ctl_q := 0;
+        ctl_q_vel := 0;
+        ctl_q_acc := 0;
         ctl_q_target := ctl_q;
         e_last := 0;
 
@@ -36,15 +44,15 @@ operations
             ctl_q_target := new_target;
     );
 
-    public MonitorArmAngle : () ==> ()
-    MonitorArmAngle() == duration(1E7)(
+    public monitorArmAngle : () ==> ()
+    monitorArmAngle() == duration(1E7)(
         -- Implement       
-        ctl_q := System_2`robert.GetArmAngle();
+        ctl_q := System_2`angle_sensor.getArmAngle();
     );
 
 
-    public ControlTheMotor : () ==> ()
-    ControlTheMotor() == duration(2E7)(
+    public controlTheMotor : () ==> ()
+    controlTheMotor() == duration(2E7)(
         dcl e : real;
         dcl t_motor1 : real;
         dcl de : real;       
@@ -52,19 +60,24 @@ operations
 
         -- PD controller
 
-        e := ctl_q_target - ctl_q;           -- error from e(t_i) 
+        e := ctl_q_target - ctl_q;  -- error from e(t_i) 
         
         -- Proportional
         t_motor1 := Kp * e;
 
         -- Derivative
-        de := e - e_last;         -- change of error    
+        de := e - e_last;           -- change of error    
         t_motor2 := Kd * de;
 
         -- Set Tourqe on world
-        System_2`robert.setTorque(t_motor1 + t_motor2);
+        System_2`motor.setTorque(t_motor1 + t_motor2);
 
         e_last := e;
+    );
+
+    public loop : () ==> ()
+    loop() == (
+        controlTheMotor();
     );
 
 
@@ -77,5 +90,7 @@ operations
     setKp(newKp) == duration(0)(
         Kp := newKp;
     );
+thread
+    periodic(2,0,0,0)(loop);
 
 end Controller_2

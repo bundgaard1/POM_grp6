@@ -3,54 +3,52 @@ class RobotArm_2
 instance variables
 
     public env_q : real;       -- angle of arm in radians
-    public env_q_vel : real;   -- velocity of arm in rad/Seq
-   
-    public env_motor_tourqe : real;  -- Tourqe applied on arm joint
+    public env_q_vel : real;   -- velocity of arm in rad/Sec
+    public env_q_acc : real;   -- acceleration of arm angle in rad/sec^2 
 
     public last_time : real;  -- A record of the last time the operation (in this case step) was called
 
-values
-    M1 : real = -0.2; -- Minimum limit for arm
-    M2 : real = 1.77; -- Maximum limit for arm
+    public final_sim_time : real;
 
-    I : real = 0.1;   --  Inertia of robot arm should be calculated: I = m*r^2
+values
+    M1 : real = -0.2;   -- Minimum limit for arm
+    M2 : real = 1.77;   -- Maximum limit for arm
+    I : real = 0.1;     -- Inertia of robot arm should be calculated: I = m*r^2
+    m : real = 0.1;     -- Mass 
+    g : real = 9.82;    -- Gravitational force
+    r : real = 1;       -- Length
+
+
     
 operations
     public RobotArm_2: () ==> RobotArm_2
     RobotArm_2() == (
         env_q := 0;
         env_q_vel := 0;
-        
-        env_motor_tourqe := 0;
+        env_q_acc := 0;
 
         last_time := 0;
+
+        final_sim_time := 0;
     );
 
-    public step: () ==> ()
-    step() == duration(0)(
-
-        dcl t : real := time / 1E9;  -- Calculate the current time
-        dcl delta : real := t - last_time; -- Calculates delta
-       
-        dcl q_acc : real := env_motor_tourqe / I;    -- calculate acceleration based on tourqe
-
-        last_time := t; -- Updates last_time
-  
-
-        env_q_vel := env_q_vel + q_acc * delta;  -- Update 
-
-        env_q := env_q + env_q_vel * delta;
-    );
-    -- post M1 <= q and q <= M2;
-
-    public setTorque : (real) ==> ()
-    setTorque(torque) == duration(2E7)(
-        env_motor_tourqe := torque;        
+    public adjustArmAngle: (real) ==> ()
+    adjustArmAngle(dqe) == duration(1E8)(
+        env_q := env_q + dqe;
     );
 
-    public GetArmAngle : () ==> (real)
-    GetArmAngle() == duration(1E7)(
+    public getArmAngle : () ==> (real)
+    getArmAngle() == duration(1E7)(
         return env_q;
     );
 
+    public getArmVel : () ==> (real)
+    getArmVel() == duration(1E8)(
+        return env_q_vel;
+    );
+
+    public setFinalSimTime : (real) ==> ()
+    setFinalSimTime(given_time) == duration(0)(
+        final_sim_time := given_time;
+    );
 end RobotArm_2
