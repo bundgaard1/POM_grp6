@@ -1,0 +1,33 @@
+@startuml Controller_2
+
+hide empty members
+skinparam Shadowing false
+skinparam classAttributeIconSize 0
+skinparam ClassBorderThickness 0.5
+skinparam groupInheritance 5
+skinparam class {
+	BackgroundColor AntiqueWhite
+	ArrowColor Black
+	BorderColor Black
+}
+skinparam defaultTextAlignment center
+
+class Controller_2
+{
+	+ctl_q : real
+	+ctl_q_target : real
+	-Kp : real
+	-Kd : real
+	-e_last : real
+	-N1 : real <<value>>
+	-N2 : real <<value>>
+	+Controller_2() : Controller_2
+	+setTarget(real)
+	+MonitorArmAngle()
+	+ControlTheMotor()
+	+setKd(real)
+	+setKp(real)
+}
+
+
+@enduml
