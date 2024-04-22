@@ -8,7 +8,7 @@ instance variables
     public gravity_torque : real
 
 values
-    I : real = 0;
+    I : real = 0.1;
     m : real = 0.1;
     g : real = 9.82;
     r : real = 1; -- 1 meter
@@ -32,8 +32,8 @@ operations
         dcl new_q : real;
         dcl dt : real;
 
-        dt := time - last_time;
-        last_time := time;
+        dt := time/1E9 - last_time;
+        last_time := time/1E9;
 
         prev_q := System_2`env.getArmAngle();
 
@@ -48,10 +48,11 @@ operations
     );
 
     public setTorque: (real) ==> ()
-    setTorque(givenTorque) == duration(1E8)(
+    setTorque(givenTorque) == duration(1E7)(
         torque:=givenTorque;
     );
+
 thread
-    periodic(2,0,0,0)(step);
+    periodic(1E8,0,0,0)(step);
 
 end Motor_2

@@ -46,7 +46,7 @@ operations
 
     public monitorArmAngle : () ==> ()
     monitorArmAngle() == duration(1E7)(
-        -- Implement       
+   
         ctl_q := System_2`angle_sensor.getArmAngle();
     );
 
@@ -77,6 +77,7 @@ operations
 
     public loop : () ==> ()
     loop() == (
+        monitorArmAngle();
         controlTheMotor();
     );
 
@@ -91,6 +92,6 @@ operations
         Kp := newKp;
     );
 thread
-    periodic(2,0,0,0)(loop);
+    periodic(3E8,0,0,0)(loop);
 
 end Controller_2

@@ -2,6 +2,8 @@ class RobotArm_2
 
 instance variables
 
+    io : IO := new IO();
+
     public env_q : real;       -- angle of arm in radians
     public env_q_vel : real;   -- velocity of arm in rad/Sec
     public env_q_acc : real;   -- acceleration of arm angle in rad/sec^2 
@@ -9,6 +11,8 @@ instance variables
     public last_time : real;  -- A record of the last time the operation (in this case step) was called
 
     public final_sim_time : real;
+
+    public state_history : seq of (real * real); -- time * angle
 
 values
     M1 : real = -0.2;   -- Minimum limit for arm
@@ -19,7 +23,6 @@ values
     r : real = 1;       -- Length
 
 
-    
 operations
     public RobotArm_2: () ==> RobotArm_2
     RobotArm_2() == (
@@ -30,20 +33,23 @@ operations
         last_time := 0;
 
         final_sim_time := 0;
+
+        state_history := [];
     );
 
     public adjustArmAngle: (real) ==> ()
-    adjustArmAngle(dqe) == duration(1E8)(
+    adjustArmAngle(dqe) == duration(0)(
         env_q := env_q + dqe;
+        state_history := state_history ^ [mk_(time/1E9, env_q)];
     );
 
     public getArmAngle : () ==> (real)
-    getArmAngle() == duration(1E7)(
+    getArmAngle() == duration(0)(
         return env_q;
     );
 
     public getArmVel : () ==> (real)
-    getArmVel() == duration(1E8)(
+    getArmVel() == duration(0)(
         return env_q_vel;
     );
 
@@ -51,4 +57,16 @@ operations
     setFinalSimTime(given_time) == duration(0)(
         final_sim_time := given_time;
     );
+
+    public isFinished : () ==> ()
+     isFinished() == (
+        dcl succ : bool;
+        succ := io.echo(VDMUtil`val2seq_of_char[real](time));
+        return;
+    );
+
+sync
+    per isFinished => (time > final_sim_time);
+
+
 end RobotArm_2
