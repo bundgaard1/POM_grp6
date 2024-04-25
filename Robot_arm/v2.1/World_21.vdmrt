@@ -20,7 +20,7 @@ operations
     public scenario1 : () ==> ()
     scenario1() == (
 
-        System_21`env.setFinalSimTime(10E9);
+        System_21`env.setFinalSimTime(15E9);
 
         System_21`controller.setTarget(1);
         System_21`controller.setKd(3);
@@ -29,6 +29,7 @@ operations
         start(System_21`controller);
         start(System_21`angle_sensor);
         start(System_21`motor);
+        start(System_21`env);
 
         System_21`env.isFinished();
 
@@ -36,6 +37,30 @@ operations
 
         return;
     );
+
+    public the_russians_are_comming : () ==> ()
+    the_russians_are_comming() == (
+        System_21`env.setFinalSimTime(10E9);
+
+        System_21`controller.setTarget(1);
+        System_21`controller.setKd(3);
+        System_21`controller.setKp(0.1);
+
+
+        --System_21`env.addEvent(6E9, <new_target>, 0.5);
+        System_21`env.addEvent(4E9, <Russian_invasion>, 0.1);
+
+
+        start(System_21`controller);
+        start(System_21`angle_sensor);
+        start(System_21`motor);
+        start(System_21`env);
+
+        System_21`env.isFinished();
+
+        StateToFile('4');
+    );
+
 
     public stateString : () ==> seq of char
     stateString() == (

@@ -26,8 +26,8 @@ types
 
 values 
 
-    M1 : real = 11 * 3.141 / 6;
-    M2 : real = 2 * 3.141 / 3;
+    M1 : real = -0.2;   -- Minimum limit for arm
+    M2 : real = 1.77;   -- Maximum limit for arm
     N1 : real = 0;    -- minimum limit for target
     N2 : real = 1.57; -- maximum limit for target
 
@@ -88,15 +88,15 @@ operations
         t_motor2 := Kd * de;
 
         -- Set Tourqe on world
-        System_2`motor.setTorque(t_motor1 + t_motor2);
+        System_21`motor.setTorque(t_motor1 + t_motor2);
 
         e_last := e;
     );
 
     public loop : () ==> ()
     loop() == (
-        monitorArmAngle();
-        controlTheMotor();
+        -- monitorArmAngle();
+        -- controlTheMotor();
 
         if ctl_mode = <Initialisation> then (
             monitorArmAngle();
@@ -110,23 +110,26 @@ operations
         ) else if (ctl_mode = <Normal>) then (
             if not sys_OK() then (
                 ctl_mode := <Emergency_stop>;
+            ) else if shut_down = true then (
+                ctl_mode := <Shut_off>;
             ) else (
                 monitorArmAngle();
                 controlTheMotor();
             )
                         
         ) else if (ctl_mode = <Emergency_stop>) then (
-            System_2`motor.setTorque(0);
+            System_21`motor.setTorque(0);
 
         ) else if (ctl_mode = <Shut_off>) then (
-            ctl_angle_target := 0;
-            setKd(0);
-            setKp(10);             
+            setKd(3);
+            setKp(0.1);             
+            ctl_angle_target := 0.1;
         )
     );
 
     public sys_OK : () ==> (bool)
     sys_OK() == duration(0)(
+
 
         if ctl_angle = ctl_prev_angle then (
             same_angle_counter := same_angle_counter + 1;

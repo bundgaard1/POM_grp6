@@ -103,6 +103,7 @@ operations
     public russian_invasion : () ==> ()
     russian_invasion() == duration(0)(
         System_21`controller.shut_down := true;
+        System_21`controller.ctl_mode := <Shut_off>;
 
     );
 
@@ -111,8 +112,7 @@ operations
         System_21`controller.setTarget(target);
     );
 
-
-    public addEvent : real * Event * int ==> () 
+    public addEvent : real * Event * real ==> () 
     addEvent(t, e, d) == duration(0)(
         events := events ^ [mk_(t, e, d)];
     );
@@ -132,14 +132,17 @@ operations
                     System_21`env.russian_invasion();
                 ) else if(event = <new_target>) then (
                     System_21`env.set_new_target(event_data);
-                )
-            )
+                );
+            events := tl events;
+            );
         );
-        events := tl events;
     );
 
 sync
     per isFinished => (time > final_sim_time);
     mutex(createEvent);
+
+thread
+    periodic(1E8,0,0,0)(createEvent);
 
 end RobotArm_21

@@ -19,7 +19,7 @@ instance variables
     bus3 : BUS := new BUS(<FCFS>, 1E100, {cpu3, cpu2});
     bus4 : BUS := new BUS(<FCFS>, 1E100, {cpu4, cpu2});
     
-    secret_bus : BUS := new BUS(<FCFS>, 1E100, {cpu1, cpu4});
+    secret_bus : BUS := new BUS(<FCFS>, 1E100, {cpu1, cpu2});
     
 
 operations
