@@ -134,10 +134,12 @@ operations
                     System_21`env.set_new_target(event_data);
                 )
             )
-        )
+        );
+        events := tl events;
     );
 
 sync
     per isFinished => (time > final_sim_time);
+    mutex(createEvent);
 
 end RobotArm_21
