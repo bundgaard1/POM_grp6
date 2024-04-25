@@ -1,11 +1,11 @@
-system System_2
+system System_21
 
 instance variables
 
-    public static env:RobotArm_2 := new RobotArm_2();
-    public static controller:Controller_2 := new Controller_2();
-    public static angle_sensor:Angle_sensor_2 := new Angle_sensor_2();
-    public static motor:Motor_2 := new Motor_2();
+    public static env:RobotArm_21 := new RobotArm_21();
+    public static controller:Controller_21 := new Controller_21();
+    public static angle_sensor:Angle_sensor_21 := new Angle_sensor_21();
+    public static motor:Motor_21 := new Motor_21();
 
     cpu1 : CPU := new CPU(<FCFS>,1E9);
     cpu2 : CPU := new CPU(<FCFS>,1E9);
@@ -19,10 +19,12 @@ instance variables
     bus3 : BUS := new BUS(<FCFS>, 1E100, {cpu3, cpu2});
     bus4 : BUS := new BUS(<FCFS>, 1E100, {cpu4, cpu2});
     
+    secret_bus : BUS := new BUS(<FCFS>, 1E100, {cpu1, cpu4});
+    
 
 operations
-    public System_2: () ==> System_2
-    System_2() == (
+    public System_21: () ==> System_21
+    System_21() == (
         cpu1.deploy(env);
         cpu2.deploy(controller);
         cpu3.deploy(angle_sensor);
@@ -30,4 +32,4 @@ operations
     );
 
 
-end System_2
+end System_21
