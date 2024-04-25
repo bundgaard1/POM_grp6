@@ -20,7 +20,7 @@ operations
     public scenario1 : () ==> ()
     scenario1() == (
 
-        System_2`env.setFinalSimTime(10E9);
+        System_2`env.setFinalSimTime(3E9);
 
         System_2`controller.setTarget(1);
         System_2`controller.setKd(3);
@@ -33,6 +33,47 @@ operations
         System_2`env.isFinished();
 
         StateToFile('1');
+
+        return;
+    );
+
+    public scenario2 : () ==> ()
+    scenario2() == (
+
+        System_2`env.setFinalSimTime(10E9);
+
+        System_2`controller.setTarget(1);
+        System_2`controller.setKd(2);
+        System_2`controller.setKp(0.5);
+
+        start(System_2`controller);
+        start(System_2`angle_sensor);
+        start(System_2`motor);
+
+        System_2`env.isFinished();
+
+        StateToFile('2');
+
+        return;
+    );
+
+
+    public scenario3 : () ==> ()
+    scenario3() == (
+
+        System_2`env.setFinalSimTime(10E9);
+        System_2`env.env_angle := 0.5;
+        System_2`controller.setTarget(0);
+        System_2`controller.setKd(2);
+        System_2`controller.setKp(0);
+
+        start(System_2`controller);
+        start(System_2`angle_sensor);
+        start(System_2`motor);
+
+        System_2`env.isFinished();
+
+        StateToFile('3');
 
         return;
     );
@@ -80,7 +121,7 @@ operations
     StateToFile(scenario) == (
         dcl succ : bool;
         dcl str : seq of char := state_history_to_string(System_2`env.state_history);
-        succ := io.fecho("../senarios/" ^ [scenario] ^".txt",str,<start>); 
+        succ := io.fecho("../senarios/" ^ [scenario] ^ ".txt",str,<start>); 
     );
 
 end World_2

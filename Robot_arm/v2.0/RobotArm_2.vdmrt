@@ -64,7 +64,7 @@ operations
     );
 
     public isFinished : () ==> ()
-     isFinished() == skip
+    isFinished() == skip
 
 sync
     per isFinished => (time > final_sim_time);
