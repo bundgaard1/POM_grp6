@@ -1,0 +1,126 @@
+class RobotArm_2   
+
+instance variables
+
+    io : IO := new IO();
+
+    public env_q : real;        -- angle of arm in radians
+    public env_q_vel : real;    -- velocity of arm in rad/Sec
+    public env_q_acc : real;    -- acceleration of arm angle in rad/sec^2 
+    public env_armStuck : bool; -- If arm is stuck, adjustArmAngle is changed. 
+
+    public last_time : real;  -- A record of the last time the operation (in this case step) was called
+
+    public final_sim_time : real;
+    public state_history : seq of (real * real); -- time * angle
+
+    public events : seq of (Event);
+
+values
+    M1 : real = -0.2;   -- Minimum limit for arm
+    M2 : real = 1.77;   -- Maximum limit for arm
+    I : real = 0.1;     -- Inertia of robot arm should be calculated: I = m*r^2
+    m : real = 0.1;     -- Mass 
+    g : real = 9.82;    -- Gravitational force
+    r : real = 1;       -- Length
+
+types
+    public Event = <Angle_changed> | <Angle_stuck> | <Motor_fails> | <Russian_invasion>;
+
+operations
+    public RobotArm_2: () ==> RobotArm_2
+    RobotArm_2() == (
+        env_q := 0;
+        env_q_vel := 0;
+        env_q_acc := 0;
+        env_armStuck := false;
+
+        last_time := 0;
+
+        final_sim_time := 0;
+
+        events :=[];
+
+        state_history := [];
+    );
+
+    public adjustArmAngle: (real) ==> ()
+    adjustArmAngle(dqe) == duration(0)(
+        if not System_s2`env.env_armStuck then (
+            state_history := state_history ^ [mk_(time/1E9, env_q)];
+        );
+        env_q := env_q + dqe;
+        state_history := state_history ^ [mk_(time/1E9, env_q)];
+        
+    );
+
+    public getArmAngle : () ==> (real)
+    getArmAngle() == duration(0)(
+        return env_q;
+    );
+
+    public getArmVel : () ==> (real)
+    getArmVel() == duration(0)(
+        return env_q_vel;
+    );
+
+    public setFinalSimTime : (real) ==> ()
+    setFinalSimTime(given_time) == duration(0)(
+        final_sim_time := given_time;
+    );
+
+    public isFinished : () ==> ()
+     isFinished() == (
+        dcl succ : bool;
+        succ := io.echo(VDMUtil`val2seq_of_char[real](time));
+        return;
+    );
+
+    public angle_changed : (real) ==> ()
+    angle_changed(new_angle) == duration(0)(
+        env_q := new_angle;        
+    );
+
+    public angle_stuck : () ==> ()
+    angle_stuck() == (
+        env_armStuck := true;
+    );
+
+    public motor_fail : () ==> ()
+    motor_fail() == duration(0)(
+        -- Implement
+    );
+
+    public russion_invasion : () ==> ()
+    russion_invasion() == duration(0)(
+        -- Implement
+    )
+
+    public addEvent : real * Event * int ==> () 
+    addEvent(t, e, d) == duration(0)(
+        events := events ^ [mk_(t, e, d)];
+    );
+
+    public createEvent : () ==> ()
+    createEvent() == (
+        if len events > 0 then (
+            let mk_(stime,event,event_data) = hd events
+            in if stime <= time then (
+                if(event = <Angle_changed>) then (
+                    System_2`env.angle_changed(event_data);
+                ) else if(event = <Angle_stuck>) then (
+                    System_2`env.angle_stuck();
+                ) else if(event = <Motor_fails>) then (
+                    System_2`env.motor_fail();
+                ) else if(event = <Russian_invasion>) then (
+                    -- Implement
+                )
+            )
+
+        )
+    ) 
+sync
+    per isFinished => (time > final_sim_time);
+
+
+end RobotArm_2

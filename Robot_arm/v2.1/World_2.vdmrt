@@ -1,0 +1,70 @@
+class World_2
+
+instance variables
+    io : IO := new IO();
+    curr_time: real := 0;
+
+operations
+
+    public UpdateTimeStamp : () ==> () 
+    UpdateTimeStamp() == duration(0) (
+        curr_time := time / 1E9;
+    );
+
+    public scenario0 :() ==> bool 
+    scenario0() == (
+        echoState();    
+        return true;
+    );
+
+    public scenario1 : () ==> seq of ((real * real))
+    scenario1() == (
+
+        System_2`env.setFinalSimTime(50E9);
+
+        System_2`controller.setTarget(1);
+        System_2`controller.setKd(0.8);
+        System_2`controller.setKp(0.8);
+
+        start(System_2`controller);
+        start(System_2`angle_sensor);
+        start(System_2`motor);
+
+        System_2`env.isFinished();
+
+        return System_2`env.state_history;
+    );
+
+    public stateString : () ==> seq of char
+    stateString() == (
+        dcl str : seq of char := "";
+        str := str ^ VDMUtil`val2seq_of_char[real](time); -- time
+        str := str ^ " ";
+        str := str ^ VDMUtil`val2seq_of_char[real](System_2`controller.ctl_q); -- controller angle
+        str := str ^ " ";
+        str := str ^ VDMUtil`val2seq_of_char[real](System_2`controller.ctl_q_target); -- next controller angle
+        str := str ^ " ";
+        str := str ^ VDMUtil`val2seq_of_char[real](System_2`env.env_q);-- arm angle
+        str := str ^ " ";
+        str := str ^ VDMUtil`val2seq_of_char[real](System_2`env.env_q_vel); -- arm velocity
+        str := str ^ " ";
+        str := str ^ VDMUtil`val2seq_of_char[real](System_2`motor.mtr_torque); -- motor torque
+        str := str ^ "\n";
+        return str
+    );
+    
+    public echoState : () ==> ()
+    echoState() == (
+        dcl succ : bool;
+        dcl str : seq of char := stateString();
+        succ := io.echo(str); 
+    );
+
+    public StateToFile : (char)  ==> ()
+    StateToFile(scenario) == (
+        dcl succ : bool;
+        dcl str : seq of char := stateString();
+        succ := io.fecho("../senarios/" ^ [scenario] ^".txt",str,<append>); 
+    );
+
+end World_2

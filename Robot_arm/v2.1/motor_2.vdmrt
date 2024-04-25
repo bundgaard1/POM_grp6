@@ -1,0 +1,58 @@
+class Motor_2
+
+instance variables
+    public mtr_torque : real;
+    public last_time : real;
+    public friction_torque : real;
+    public torque : real;
+    public gravity_torque : real
+
+values
+    I : real = 0.1;
+    m : real = 0.1;
+    g : real = 9.82;
+    r : real = 1; -- 1 meter
+
+operations
+    public Motor_2: () ==> Motor_2
+    Motor_2() == (
+        mtr_torque := 0;
+        last_time := 0;
+        friction_torque := 0;
+        torque := 0;
+        gravity_torque := 0;
+    );
+    
+    public step: () ==> ()
+    step() == duration(0)(
+        dcl q_acc : real;
+        dcl q_vel : real;
+        dcl prev_q_vel : real;
+        dcl prev_q : real;
+        dcl new_q : real;
+        dcl dt : real;
+
+        dt := time/1E9 - last_time;
+        last_time := time/1E9;
+
+        prev_q := System_2`env.getArmAngle();
+
+        q_acc := torque / I;
+        prev_q_vel := System_2`env.getArmVel();
+        
+        q_vel := prev_q_vel + q_acc * dt;
+
+        new_q := prev_q + q_vel * dt;
+        
+        System_2`env.adjustArmAngle(new_q - prev_q);
+    );
+
+    public setTorque: (real) ==> ()
+    setTorque(givenTorque) == duration(1E7)(
+        torque:=givenTorque;
+    );
+
+thread
+    periodic(1E8,0,0,0)(step);
+
+end Motor_2
