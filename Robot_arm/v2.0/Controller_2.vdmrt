@@ -2,16 +2,18 @@ class Controller_2
 
 instance variables
 
-    public ctl_q : real;       -- angle of arm in radians
-    public ctl_q_vel : real;
-    public ctl_q_acc : real;
+    public ctl_angle : real;       -- angle of arm in radians
+    public ctl_angle_vel : real;
+    public ctl_angle_acc : real;
 
-    public ctl_q_target : real;  -- taget angel of the arm in radians 
+    public ctl_angle_target : real;  -- taget angel of the arm in radians 
    
     Kp : real; -- Proportional factor 
     Kd : real; -- derivative factor 
    
     e_last : real;  -- error at last control
+
+    public state_history : seq of (real * real); --time * ctl_angle 
 
 values 
 
@@ -26,14 +28,16 @@ operations
 
     public Controller_2: () ==> Controller_2
     Controller_2() == (
-        ctl_q := 0;
-        ctl_q_vel := 0;
-        ctl_q_acc := 0;
-        ctl_q_target := ctl_q;
+        ctl_angle := 0;
+        ctl_angle_vel := 0;
+        ctl_angle_acc := 0;
+        ctl_angle_target := ctl_angle;
         e_last := 0;
 
         Kp := 1;
         Kd := 1;
+
+        state_history := []
 
     );
 
@@ -41,18 +45,18 @@ operations
     setTarget(new_target) == duration(1E7)(
 
         if N1 < new_target and new_target < N2 then
-            ctl_q_target := new_target;
+            ctl_angle_target := new_target;
     );
 
     public monitorArmAngle : () ==> ()
     monitorArmAngle() == duration(1E7)(
    
-        ctl_q := System_2`angle_sensor.getArmAngle();
+        ctl_angle := System_2`angle_sensor.getArmAngle();
     );
 
 
     public controlTheMotor : () ==> ()
-    controlTheMotor() == duration(2E7)(
+    controlTheMotor() == duration(1E7)(
         dcl e : real;
         dcl t_motor1 : real;
         dcl de : real;       
@@ -60,7 +64,7 @@ operations
 
         -- PD controller
 
-        e := ctl_q_target - ctl_q;  -- error from e(t_i) 
+        e := ctl_angle_target - ctl_angle;  -- error from e(t_i) 
         
         -- Proportional
         t_motor1 := Kp * e;
@@ -92,6 +96,6 @@ operations
         Kp := newKp;
     );
 thread
-    periodic(3E8,0,0,0)(loop);
+    periodic(1E8,0,0,0)(loop);
 
 end Controller_2

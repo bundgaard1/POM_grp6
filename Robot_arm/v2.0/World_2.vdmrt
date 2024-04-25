@@ -17,14 +17,14 @@ operations
         return true;
     );
 
-    public scenario1 : () ==> seq of ((real * real))
+    public scenario1 : () ==> ()
     scenario1() == (
 
-        System_2`env.setFinalSimTime(50E9);
+        System_2`env.setFinalSimTime(10E9);
 
         System_2`controller.setTarget(1);
-        System_2`controller.setKd(0.8);
-        System_2`controller.setKp(0.8);
+        System_2`controller.setKd(3);
+        System_2`controller.setKp(0.1);
 
         start(System_2`controller);
         start(System_2`angle_sensor);
@@ -32,7 +32,9 @@ operations
 
         System_2`env.isFinished();
 
-        return System_2`env.state_history;
+        StateToFile('1');
+
+        return;
     );
 
     public stateString : () ==> seq of char
@@ -40,16 +42,30 @@ operations
         dcl str : seq of char := "";
         str := str ^ VDMUtil`val2seq_of_char[real](time); -- time
         str := str ^ " ";
-        str := str ^ VDMUtil`val2seq_of_char[real](System_2`controller.ctl_q); -- controller angle
+        str := str ^ VDMUtil`val2seq_of_char[real](System_2`controller.ctl_angle); -- controller angle
         str := str ^ " ";
-        str := str ^ VDMUtil`val2seq_of_char[real](System_2`controller.ctl_q_target); -- next controller angle
+        str := str ^ VDMUtil`val2seq_of_char[real](System_2`controller.ctl_angle_target); -- next controller angle
         str := str ^ " ";
-        str := str ^ VDMUtil`val2seq_of_char[real](System_2`env.env_q);-- arm angle
+        str := str ^ VDMUtil`val2seq_of_char[real](System_2`env.env_angle); -- arm angle
         str := str ^ " ";
-        str := str ^ VDMUtil`val2seq_of_char[real](System_2`env.env_q_vel); -- arm velocity
+        str := str ^ VDMUtil`val2seq_of_char[real](System_2`env.env_angle_vel); -- arm velocity
         str := str ^ " ";
         str := str ^ VDMUtil`val2seq_of_char[real](System_2`motor.mtr_torque); -- motor torque
         str := str ^ "\n";
+        return str
+    );
+
+    public state_history_to_string : (seq of (real * real * real)) ==> seq of char
+    state_history_to_string(history) == (
+        dcl str : seq of char := "";
+        for mk_(t, q, v) in history do (
+                str := str ^ VDMUtil`val2seq_of_char[real](t); -- time
+                str := str ^ " ";
+                str := str ^ VDMUtil`val2seq_of_char[real](q);
+                str := str ^ " ";
+                str := str ^ VDMUtil`val2seq_of_char[real](v); -- time
+                str := str ^ "\n";
+            );
         return str
     );
     
@@ -63,8 +79,8 @@ operations
     public StateToFile : (char)  ==> ()
     StateToFile(scenario) == (
         dcl succ : bool;
-        dcl str : seq of char := stateString();
-        succ := io.fecho("../senarios/" ^ [scenario] ^".txt",str,<append>); 
+        dcl str : seq of char := state_history_to_string(System_2`env.state_history);
+        succ := io.fecho("../senarios/" ^ [scenario] ^".txt",str,<start>); 
     );
 
 end World_2
