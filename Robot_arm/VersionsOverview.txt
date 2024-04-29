@@ -30,3 +30,21 @@ Made the model concurrent, and shifted away from a user-centric perspective to a
 Implemented real time durations for the various operations
 ---
 Model v2.0
+
+Decomposing architecture for clean interface. Introduced running
+the simulation on threads with periodic loop functions, for each
+of the components
+
+---
+Model v2.1
+
+Introduced controller modes in the system to handle environmen-
+tal events such as motor malfunction or physical blockage of the
+arm. Test scenarios for the environmental events were created.
+
+---
+Model v2.2
+
+Implemented gravity and friction 
+
+

@@ -1,0 +1,173 @@
+class World_22
+
+instance variables
+    io : IO := new IO();
+    curr_time: real := 0;
+
+operations
+
+    public UpdateTimeStamp : () ==> () 
+    UpdateTimeStamp() == duration(0) (
+        curr_time := time / 1E9;
+    );
+
+    public scenario0 :() ==> bool 
+    scenario0() == (
+        echoState();    
+        return true;
+    );
+
+    public scenario1 : () ==> ()
+    scenario1() == (
+
+        System_22`env.setFinalSimTime(10E9);
+
+        System_22`controller.setTarget(1);
+        System_22`controller.setKd(2);
+        System_22`controller.setKp(0.2);
+
+        start(System_22`controller);
+        start(System_22`angle_sensor);
+        start(System_22`motor);
+        start(System_22`env);
+
+        System_22`env.isFinished();
+
+        StateToFile('1');
+
+        return;
+    );
+
+    public scenario2 : () ==> ()
+    scenario2() == (
+
+        System_22`env.setFinalSimTime(10E9);
+
+        System_22`controller.setTarget(1);
+        System_22`controller.setKd(1);
+        System_22`controller.setKp(0.3);
+
+        System_22`env.addEvent(2E9, <Angle_stuck>, 0.5);
+
+        start(System_22`controller);
+        start(System_22`angle_sensor);
+        start(System_22`motor);
+        start(System_22`env);
+
+        System_22`env.isFinished();
+
+        StateToFile('2');
+
+        return;
+    );
+
+    public scenario3 : () ==> ()
+    scenario3() == (
+
+        System_22`env.setFinalSimTime(10E9);
+
+        System_22`controller.setTarget(1);
+        System_22`controller.setKd(1);
+        System_22`controller.setKp(0.3);
+
+        System_22`env.addEvent(5E9, <Motor_fails>, 0.0);
+ 
+        start(System_22`controller);
+        start(System_22`angle_sensor);
+        start(System_22`motor);
+        start(System_22`env);
+
+        System_22`env.isFinished();
+
+        StateToFile('3');
+
+        return;
+    );
+
+    public the_russians_are_comming : () ==> ()
+    the_russians_are_comming() == (
+        System_22`env.setFinalSimTime(10E9);
+
+        System_22`controller.setTarget(1);
+        System_22`controller.setKd(3);
+        System_22`controller.setKp(0.1);
+
+        --System_22`env.addEvent(6E9, <new_target>, 0.5);
+        System_22`env.addEvent(5E9, <Motor_fails>, 0.0);
+
+        start(System_22`controller);
+        start(System_22`angle_sensor);
+        start(System_22`motor);
+        start(System_22`env);
+
+        System_22`env.isFinished();
+
+        StateToFile('4');
+    );
+
+
+    public stateString : () ==> seq of char
+    stateString() == (
+        dcl str : seq of char := "";
+        str := str ^ VDMUtil`val2seq_of_char[real](time); -- time
+        str := str ^ " ";
+        str := str ^ VDMUtil`val2seq_of_char[real](System_22`controller.ctl_angle); -- controller angle
+        str := str ^ " ";
+        str := str ^ VDMUtil`val2seq_of_char[real](System_22`controller.ctl_angle_target); -- next controller angle
+        str := str ^ " ";
+        str := str ^ VDMUtil`val2seq_of_char[real](System_22`env.env_angle); -- arm angle
+        str := str ^ " ";
+        str := str ^ VDMUtil`val2seq_of_char[real](System_22`env.env_angle_vel); -- arm velocity
+        str := str ^ " ";
+        str := str ^ VDMUtil`val2seq_of_char[real](System_22`motor.torque_motor); -- motor torque
+        str := str ^ "\n";
+        return str
+    );
+
+    public state_history_to_string : (seq of (real * real * real)) ==> seq of char
+    state_history_to_string(history) == (
+        dcl str : seq of char := "";
+        for mk_(t, q, v) in history do (
+                str := str ^ VDMUtil`val2seq_of_char[real](t); -- time
+                str := str ^ " ";
+                str := str ^ VDMUtil`val2seq_of_char[real](q);
+                str := str ^ " ";
+                str := str ^ VDMUtil`val2seq_of_char[real](v); -- time
+                str := str ^ "\n";
+            );
+        return str
+    );
+
+    public motor_state_history_to_string : (seq of (real * real * real * real)) ==> seq of char
+    motor_state_history_to_string(history) == (
+        dcl str : seq of char := "";
+        for mk_(t, m_t, g_t, f_t) in history do (
+                str := str ^ VDMUtil`val2seq_of_char[real](t); -- time
+                str := str ^ " ";
+                str := str ^ VDMUtil`val2seq_of_char[real](m_t); -- motor torque
+                str := str ^ " ";
+                str := str ^ VDMUtil`val2seq_of_char[real](g_t); -- motor torque
+                str := str ^ " ";
+                str := str ^ VDMUtil`val2seq_of_char[real](f_t); -- motor torque
+                str := str ^ "\n";
+            );
+        return str
+    );
+    
+    public echoState : () ==> ()
+    echoState() == (
+        dcl succ : bool;
+        dcl str : seq of char := stateString();
+        succ := io.echo(str); 
+    );
+
+    public StateToFile : (char)  ==> ()
+    StateToFile(scenario) == (
+        dcl succ : bool;
+        dcl str : seq of char := state_history_to_string(System_22`env.state_history);
+        succ := io.fecho("../senarios/" ^ [scenario] ^".txt",str,<start>); 
+        str := motor_state_history_to_string(System_22`motor.state_history);
+        succ := io.fecho("../senarios/"^ [scenario] ^"motor.txt",str,<start>); 
+    );
+
+end World_22

@@ -1,0 +1,35 @@
+system System_22
+
+instance variables
+
+    public static env:RobotArm_22 := new RobotArm_22();
+    public static controller:Controller_22 := new Controller_22();
+    public static angle_sensor:Angle_sensor_22 := new Angle_sensor_22();
+    public static motor:Motor_22 := new Motor_22();
+
+    cpu1 : CPU := new CPU(<FCFS>,1E9);
+    cpu2 : CPU := new CPU(<FCFS>,1E9);
+    cpu3 : CPU := new CPU(<FCFS>,1E9);
+    cpu4 : CPU := new CPU(<FCFS>,1E9);
+
+
+
+    bus1 : BUS := new BUS(<FCFS>, 1E100, {cpu1, cpu3});
+    bus2 : BUS := new BUS(<FCFS>, 1E100, {cpu1, cpu4});
+    bus3 : BUS := new BUS(<FCFS>, 1E100, {cpu3, cpu2});
+    bus4 : BUS := new BUS(<FCFS>, 1E100, {cpu4, cpu2});
+    
+    secret_bus : BUS := new BUS(<FCFS>, 1E100, {cpu1, cpu2});
+    
+
+operations
+    public System_22: () ==> System_22
+    System_22() == (
+        cpu1.deploy(env);
+        cpu2.deploy(controller);
+        cpu3.deploy(angle_sensor);
+        cpu4.deploy(motor);
+    );
+
+
+end System_22
