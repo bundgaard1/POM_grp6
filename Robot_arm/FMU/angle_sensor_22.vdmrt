@@ -1,0 +1,19 @@
+class Angle_sensor_22
+instance variables
+    public snr_angle : real; --sensor value of arm angle
+
+    angle_port : RealPort;
+
+operations
+    public Angle_sensor_22: RealPort ==> Angle_sensor_22
+    Angle_sensor_22(p) == (
+        snr_angle := 0;
+        angle_port := p
+    );
+
+    public getArmAngle: () ==> real
+    getArmAngle() == duration(0)(
+        return angle_port.getValue();
+    );
+
+end Angle_sensor_22

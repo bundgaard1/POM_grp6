@@ -1,0 +1,27 @@
+system System
+
+instance variables
+
+    public static hwi:HardwareInterface := new HardwareInterface(); 
+
+    public motor : Motor_22;
+    public angle_sensor : Angle_sensor_22;
+
+    public static controller : [Controller_22] := nil;
+
+    cpu : CPU := new CPU(<FCFS>,1E9);
+    
+
+operations
+    public System: () ==> System
+    System() == (
+        angle_sensor := new Angle_sensor_22(hwi.angle);
+        motor := new Motor_22(hwi.angle, hwi.angleVel, hwi.output);
+
+        controller := new Controller_22(motor, angle_sensor);
+
+        cpu.deploy(controller, "Controller");
+    );
+
+
+end System

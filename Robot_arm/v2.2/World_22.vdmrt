@@ -64,7 +64,7 @@ operations
     public scenario3 : () ==> ()
     scenario3() == (
 
-        System_22`env.setFinalSimTime(10E9);
+        System_22`env.setFinalSimTime(40E9);
 
         System_22`controller.setTarget(1);
         System_22`controller.setKd(1);

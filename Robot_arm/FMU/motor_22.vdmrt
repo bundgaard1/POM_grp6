@@ -1,0 +1,77 @@
+class Motor_22
+
+instance variables
+    public last_time : real;
+    public torque_motor : real;
+    public motor_failed : bool;
+
+    angle_port : RealPort;
+    angle_vel_port : RealPort;
+    output_port : RealPort;
+
+values
+    I : real = 0.1;
+    m : real = 0.1;
+    g : real = 1;
+    r : real = 1; -- 1 meter
+
+    F_c : real = 0.03;
+    F_v : real = 0.01;
+
+operations
+    public Motor_22: RealPort * RealPort * RealPort ==> Motor_22
+    Motor_22(ap, avp,op) == (
+        motor_failed := false;
+        last_time := 0;
+        torque_motor := 0;
+        angle_port := ap;
+        angle_vel_port := avp;
+        output_port := op;
+    );
+    
+    public step: () ==> ()
+    step() == duration(0)(
+        dcl q_acc : real;
+        dcl q_vel : real;
+        dcl prev_angle_vel : real;
+        dcl prev_angle : real;
+        dcl new_angle : real;
+        dcl dt : real;
+        dcl torque_gravity : real;
+        dcl torque_friction : real;
+
+        dt := time/1E9 - last_time;
+        last_time := time/1E9;
+
+        prev_angle := angle_port.getValue();
+
+        prev_angle_vel := angle_vel_port.getValue();
+
+        torque_gravity := - m * g * r * MATH`cos(prev_angle);
+        torque_friction := F_c * MATH`atan(prev_angle_vel) + F_v * prev_angle_vel;
+
+        q_acc := (torque_motor + torque_gravity - torque_friction) / I;
+        
+        q_vel := prev_angle_vel + q_acc * dt;
+
+        new_angle := prev_angle + q_vel * dt;
+
+        output_port.setValue(new_angle);
+        
+
+    );
+
+    public setTorque: (real) ==> ()
+    setTorque(givenTorque) == duration(0)(
+        if motor_failed then (
+            torque_motor := 0;
+            return;
+        );
+
+        torque_motor := givenTorque;
+    );
+
+thread
+    periodic(2E7,0,0,0)(step);
+
+end Motor_22

@@ -1,0 +1,12 @@
+{
+    "configurations": [
+        {
+            "name": "Lens config: Launch World_22`scenario3",
+            "type": "vdm",
+            "request": "launch",
+            "noDebug": true,
+            "defaultName": "World_22",
+            "command": "p new World_22().scenario3()"
+        }
+    ]
+}

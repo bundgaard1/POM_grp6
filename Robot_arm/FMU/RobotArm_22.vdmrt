@@ -1,0 +1,148 @@
+class RobotArm_22   
+
+instance variables
+
+    public env_angle : real;       -- angle of arm in radians
+    public env_angle_vel : real;   -- velocity of arm in rad/Sec
+    public env_angle_acc : real;   -- acceleration of arm angle in rad/sec^2 
+    public env_arm_stuck : bool;
+
+    public events : seq of (real * Event * real); 
+
+    public last_time : real;  -- A record of the last time the operation (in his case step) was called
+
+    public final_sim_time : real;
+
+    public state_history : seq of (real * real * real); -- time * env_angle * env_angle_vel
+
+types 
+    public Event = <Angle_stuck> | <Angle_changed> | <Motor_fails> | <Russian_invasion> | <new_target>
+
+values
+    M1 : real = -0.2;   -- Minimum limit for arm
+    M2 : real = 1.77;   -- Maximum limit for arm
+    I : real = 0.1;     -- Inertia of robot arm should be calculated: I = m*r^2
+    m : real = 0.1;     -- Mass 
+    g : real = 9.82;    -- Gravitational force
+    r : real = 1;       -- Length
+
+
+operations
+    public RobotArm_22: () ==> RobotArm_22
+   RobotArm_22() == (
+        env_angle := 0;
+        env_angle_vel := 0;
+        env_angle_acc := 0;
+        env_arm_stuck := false;
+
+        events := [];
+
+        last_time := -1E4;
+
+        final_sim_time := 0;
+
+        state_history := [];
+    );
+
+    public adjustArmAngle: (real) ==> ()
+    adjustArmAngle(dqe) == duration(0)(
+
+        dcl t: real := time/1E9;
+        dcl dt: real := t-last_time;
+
+        -- THIS IS FOR SIMULATING ARM STUCK
+        if env_arm_stuck then (
+            state_history := state_history ^ [mk_(t, env_angle, 0)];
+            last_time := t;
+            return;
+        );
+        ------------------
+
+        if dt <> 0 then (
+            env_angle_vel := dqe / dt; 
+        );
+        
+        env_angle := env_angle + dqe;
+        state_history := state_history ^ [mk_(t, env_angle, env_angle_vel)];
+        last_time := t;
+    );
+
+    public getArmAngle : () ==> (real)
+    getArmAngle() == duration(0)(
+        return env_angle;
+    );
+
+    public getArmVel : () ==> (real)
+    getArmVel() == duration(0)(
+        return env_angle_vel;
+    );
+
+    public setFinalSimTime : (real) ==> ()
+    setFinalSimTime(given_time) == duration(0)(
+        final_sim_time := given_time;
+    );
+
+    public isFinished : () ==> ()
+     isFinished() == skip;
+
+    public angle_changed : (real) ==> ()
+    angle_changed(new_angle) == duration(0)(
+        env_angle := new_angle;        
+    );
+
+    public angle_stuck : () ==> ()
+    angle_stuck() == (
+        env_arm_stuck := true;
+    );
+
+    public motor_fail : () ==> ()
+    motor_fail() == duration(0)(
+        System`motor.motor_failed := true;
+    );
+
+    public russian_invasion : () ==> ()
+    russian_invasion() == duration(0)(
+        System`controller.shut_down := true;
+        System`controller.ctl_mode := <Shut_off>;
+
+    );
+
+    public set_new_target : (real) ==> ()
+    set_new_target(target) == (
+        System`controller.setTarget(target);
+    );
+
+    public addEvent : real * Event * real ==> () 
+    addEvent(t, e, d) == duration(0)(
+        events := events ^ [mk_(t, e, d)];
+    );
+
+    public createEvent : () ==> ()
+    createEvent() == (
+        if len events > 0 then (
+            let mk_(stime,event,event_data) = hd events
+            in if stime <= time then (
+                if event = <Angle_changed> then (
+                    System`env.angle_changed(event_data);
+                ) else if(event = <Angle_stuck>) then (
+                    System`env.angle_stuck();
+                ) else if(event = <Motor_fails>) then (
+                    System`env.motor_fail();
+                ) else if(event = <Russian_invasion>) then (
+                    System`env.russian_invasion();
+                ) else if(event = <new_target>) then (
+                    System`env.set_new_target(event_data);
+                );
+            events := tl events;
+            );
+        );
+    );
+
+sync
+    per isFinished => (time > final_sim_time);
+    mutex(createEvent);
+
+thread
+    periodic(1E8,0,0,0)(createEvent);
+
+end RobotArm_22
