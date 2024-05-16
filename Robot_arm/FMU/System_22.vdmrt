@@ -16,9 +16,9 @@ operations
     public System: () ==> System
     System() == (
         angle_sensor := new Angle_sensor_22(hwi.angle);
-        motor := new Motor_22(hwi.angle, hwi.angleVel, hwi.output);
+        motor := new Motor_22(hwi.angle, hwi.angleVel, hwi.out);
 
-        controller := new Controller_22(motor, angle_sensor);
+        controller := new Controller_22(motor, angle_sensor, hwi.Kp, hwi.Kd);
 
         cpu.deploy(controller, "Controller");
     );

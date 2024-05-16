@@ -1,29 +1,29 @@
 class HardwareInterface
 values
-    -- @ interface: type = parameter, name="minAngle"
+    -- @ interface: type = parameter, name="minAngle";
     public minAngle : RealPort = new RealPort(0.0);
 
-    -- @ interface: type = parameter, name="maxAngle"
+    -- @ interface: type = parameter, name="maxAngle";
     public maxAngle : RealPort = new RealPort(2.0);
 
-    -- @ interface: type = parameter, name="Kp"
+    -- @ interface: type = parameter, name="Kp";
     public Kp : RealPort = new RealPort(0.0);
 
-    -- @ interface: type = parameter, name="Kd"
+    -- @ interface: type = parameter, name="Kd";
     public Kd : RealPort = new RealPort(0.0);
 
 instance variables
-    -- @ interface: type = input, name="arm_angle"
+    -- @ interface: type = input, name="arm_angle";
     public angle : RealPort := new RealPort(0.0);
 
-    -- @ interface: type = input, name="arm_angle_vel"
+    -- @ interface: type = input, name="arm_angle_vel";
     public angleVel : RealPort := new RealPort(0.0);
 
-    -- @ interface: type = input, name="inertia"
+    -- @ interface: type = input, name="inertia";
     public inertia : RealPort := new RealPort(0.0);
 
-    -- @ interface: type = output, name="output"
-    public output : RealPort := new RealPort(0.0);
+    -- @ interface: type = output, name="out";
+    public out : RealPort := new RealPort(0.0);
 
 
 

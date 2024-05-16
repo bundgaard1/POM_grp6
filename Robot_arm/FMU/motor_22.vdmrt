@@ -56,7 +56,7 @@ operations
 
         new_angle := prev_angle + q_vel * dt;
 
-        output_port.setValue(new_angle);
+        output_port.setValue(torque_motor + torque_gravity - torque_friction);
         
 
     );

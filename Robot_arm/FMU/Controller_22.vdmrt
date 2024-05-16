@@ -144,7 +144,7 @@ operations
             return false;
         );
 
-        if System`motor.motor_failed then (
+        if motor.motor_failed then (
             return false;
         );
 
